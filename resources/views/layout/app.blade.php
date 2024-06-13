@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light" data-menu-color="brand" data-topbar-color="light">
+<html lang="en">
     <head>
-        <meta charset="utf-8" />
         <title>@yield('title')</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="">
+        <meta name="author" content="Phoenixcoded" />
 
         @include('layout.style')
 
+        <!-- one signal for notification -->
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
         <script>
             window.OneSignal = window.OneSignal || [];
@@ -22,45 +28,26 @@
     </head>
 
     <body>
-        <!-- Begin page -->
-        <div class="layout-wrapper">
+        <!-- [ Pre-loader ] start -->
+        <div class="loader-bg">
+            <div class="loader-track">
+                <div class="loader-fill"></div>
+            </div>
+        </div>
 
-            <!-- Left Sidebar -->
-            @include('layout.sidebar')
+        <!-- Left Sidebar -->
+        @include('layout.sidebar')
 
-            <!-- Start Page Content here -->
-            <div class="page-content">
+        <!-- Topbar -->
+        @include('layout.navbar')
 
-                <!-- Topbar -->
-                @include('layout.navbar')
-
-                <!-- Content Start -->
-                <div class="px-3">
-
-                    <!-- Container Start -->
-                    <div class="container-fluid">
-
-                        <!-- start page title -->
-                        <div class="py-3 py-lg-4">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <h4 class="page-title mb-0">@yield('pageTitle')</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end page title -->
-                        @yield('content')
-
-                    </div><!-- Container End -->
-
-                </div> <!-- Content End -->
-
-                @include('layout.footer')
-            </div> <!-- End Page Content -->
-
+        <!-- [ Main Content ] start -->
+        <div class="pcoded-main-container">
+            @yield('content')
         </div>
 
         @include('layout.script')
+
         @yield('script')
 
     </body>
