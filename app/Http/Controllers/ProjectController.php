@@ -43,6 +43,9 @@ class ProjectController extends Controller
         
         $project['name']        = $request->name;
         $project['description'] = $request->description ?? null;
+        $project['plan']        = $request->project_plan ?? null;
+        $project['ref_url']     = $request->ref_url ?? null;
+        $project['deadline']    = $request->deadline ?? null;
         $project['company_id']  = user_company_id();
         $project['created_by']  = Auth::id();
         
@@ -63,9 +66,11 @@ class ProjectController extends Controller
             'name' => 'required',
         ]);
 
-        $post_data['name']      = $request->name;
-        $post_data['description'] = $request->description ?? null;
-        $post_data['company_id']  = user_company_id();
+        $post_data['name']          = $request->name;
+        $post_data['description']   = $request->description;
+        $post_data['plan']            = $request->project_plan;
+        $post_data['ref_url']         = $request->ref_url;
+        $post_data['deadline']        = $request->deadline;
         $post_data['updated_by']    = Auth::id();
 
         $project = Project::find($request->id);
@@ -80,6 +85,13 @@ class ProjectController extends Controller
         $project->delete(); // Soft delete
 
         return redirect()->route('projects.list')->with('success', 'Record deleted successfully.');
+    }
+
+    public function show($id)
+    {
+        $project_id = base64_decode($id);
+        $data['project'] = Project::with('comments.user')->find($project_id);
+        return view('projects.show', $data);
     }
 
     public function soft_delete_functions($id)

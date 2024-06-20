@@ -13,6 +13,9 @@ class Project extends Model
     protected $fillable = [
         'name',
         'description',
+        'plan',
+        'ref_url',
+        'deadline',
         'company_id',
         'is_enable',
         'created_by',
@@ -27,5 +30,10 @@ class Project extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(ProjectComment::class);
     }
 }

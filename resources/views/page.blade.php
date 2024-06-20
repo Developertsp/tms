@@ -1,65 +1,53 @@
 @extends('layout.app')
-@section('title', 'Create Role | TSP - Task Management System')
-@section('pageTitle', 'Add New Role')
+@section('title', 'Edit Project | TSP - Task Management System')
+@section('pageTitle', 'Edit Project Detail')
 
 @section('content')
+
 <!-- Start Page Content here -->
 
-<div class="pcoded-content">
-    <!-- [ breadcrumb ] start -->
-    <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Dashboard Analytics</h5>
-                    </div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="#!">Dashboard Analytics</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- [ breadcrumb ] end -->
-    <!-- [ Main Content ] start -->
     <div class="row">
-
-        <!-- Latest Customers start -->
-        <div class="col-lg-12">
-            <div class="card table-card review-card">
-                <div class="card-header borderless ">
-                    <h5>Customer Reviews</h5>
-                    <div class="card-header-right">
-                        <div class="btn-group card-option">
-                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="feather icon-more-horizontal"></i>
-                            </button>
-                            <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right">
-                                <li class="dropdown-item full-card"><a href="#!"><span><i class="feather icon-maximize"></i> maximize</span><span style="display:none"><i class="feather icon-minimize"></i> Restore</span></a></li>
-                                <li class="dropdown-item minimize-card"><a href="#!"><span><i class="feather icon-minus"></i> collapse</span><span style="display:none"><i class="feather icon-plus"></i> expand</span></a></li>
-                                <li class="dropdown-item reload-card"><a href="#!"><i class="feather icon-refresh-cw"></i> reload</a></li>
-                                <li class="dropdown-item close-card"><a href="#!"><i class="feather icon-trash"></i> remove</a></li>
-                            </ul>
-                        </div>
-                    </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Enter Detail</h5>
                 </div>
                 <div class="card-body">
-                    <div class="review-block">
-                   
-                        
-                    </div>
-                    <div class="text-right  m-r-20">
-                        <a href="#!" class="b-b-primary text-primary">View all Customer Reviews</a>
-                    </div>
+                    <form action="{{ route('projects.update') }}"  method="post" class="needs-validation" novalidate>
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $project->id }}">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="floating-label" for="role">Project Name</label>
+                                    <input name="name" type="text" class="form-control" id="name" placeholder="Enter Project Name" value="{{ old('description',$project->name) }}" required>
+                                </div>
+                                @if ($errors->has('name'))
+                                    <span class="help-block text-danger">
+                                        {{ $errors->first('name') }}
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="floating-label" for="role">Project Overview</label>
+                                <input name="description" type="text" class="form-control py-5" id="description" placeholder="Project Overview" value="{{ old('description',$project->description) }}" required>
+                            </div>
+                            @if ($errors->has('description'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('description') }}
+                            </span>
+                            @endif
+                        </div>
+
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn  btn-primary">Update</button>
+                            </div>    
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Latest Customers end -->
     </div>
-    <!-- [ Main Content ] end -->
-</div>
 
 @endsection
