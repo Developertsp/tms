@@ -12,12 +12,20 @@ class Project extends Model
 
     protected $fillable = [
         'name',
+        'description',
+        'company_id',
         'is_enable',
+        'created_by',
         'updated_by',
     ];
 
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

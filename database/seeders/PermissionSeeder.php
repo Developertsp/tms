@@ -14,11 +14,16 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            'view-companies',
+            'create-companies',
+            'update-companies',
+            'delete-companies',
+            
             'view-users',
             'create-users',
             'update-users',
             'delete-users',
-            
+
             'view-roles',
             'create-roles',
             'update-roles',
@@ -38,8 +43,9 @@ class PermissionSeeder extends Seeder
             'create-departments',
             'update-departments',
             'delete-departments',
+
         ];
-      
+
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }

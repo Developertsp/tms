@@ -25,7 +25,7 @@
                             <tbody>
                                 @foreach ($roles as $role)
                                     <tr>
-                                        <td>{{ $role->name }}</td>
+                                        <td>{{filter_company_id($role->name)}}</td>
                                         <td>
                                             {{-- <a class="btn btn-info" href="{{ route('roles.show', $role->id) }}">Show</a> --}}
                                             @can('update-roles')

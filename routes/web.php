@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,8 +42,18 @@ Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
+// User Profile Routes
 Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');
 Route::post('users/profile_update', [UserController::class, 'profile_update'])->name('users.profile_update');
+
+// Company Routes
+Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
+Route::get('companies/create', [CompanyController::class, 'create'])->name('companies.create');
+Route::post('companies/store', [CompanyController::class, 'store'])->name('companies.store');
+Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
+Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
+Route::delete('companies/destroy/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+
 
 // Task Routes
 Route::get('tasks', [TaskController::class, 'index'])->name('tasks.list');

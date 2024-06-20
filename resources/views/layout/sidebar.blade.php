@@ -32,6 +32,7 @@
                 <li class="nav-item">
                     <a href="{{route('dashboard')}}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                 </li>
+
                 @can('view-roles')
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fa fa-user-tag"></i></span><span class="pcoded-mtext">Roles</span></a>
@@ -52,6 +53,18 @@
                         <li><a href="{{ route('users.create') }}">Add New</a></li>
                         @endcan
                         <li><a href="{{ route('users.list') }}">List</a></li>
+                    </ul>
+                </li>
+                @endcan
+
+                @can('view-companies')
+                <li class="nav-item pcoded-hasmenu">
+                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fa fa-user-tag"></i></span><span class="pcoded-mtext">Companies</span></a>
+                    <ul class="pcoded-submenu">
+                        @can('create-companies')
+                        <li><a href="{{ route('companies.create') }}">Add New</a></li>
+                        @endcan
+                        <li><a href="{{ route('companies.list') }}">List</a></li>
                     </ul>
                 </li>
                 @endcan

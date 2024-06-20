@@ -70,7 +70,7 @@
         @include('layout.script')
 
         @yield('script')
-
+        @stack('scripts')
     </body>
 
 </html>

@@ -20,7 +20,11 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $data['projects'] = Project::where('is_enable', 1)->get();
+        if (system_role()) {
+            $data['projects'] = Project::with('company:id,name')->where('is_enable', 1)->orderBy('company_id')->get();
+        } else {
+            $data['projects'] = Project::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
+        }
         return view('projects.list', $data);
     }
 
@@ -32,13 +36,15 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|alpha_space|unique:projects,name',
+            'name' => 'required',
         ]);
 
         $project = new Project();
         
-        $project['name'] = $request->name;
-        $project['created_by'] = Auth::id();
+        $project['name']        = $request->name;
+        $project['description'] = $request->description ?? null;
+        $project['company_id']  = user_company_id();
+        $project['created_by']  = Auth::id();
         
         $response = $project->save();
     
@@ -54,10 +60,12 @@ class ProjectController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|alpha_space|unique:projects,name,' . $request->id,
+            'name' => 'required',
         ]);
 
-        $post_data['name']          = $request->name;
+        $post_data['name']      = $request->name;
+        $post_data['description'] = $request->description ?? null;
+        $post_data['company_id']  = user_company_id();
         $post_data['updated_by']    = Auth::id();
 
         $project = Project::find($request->id);

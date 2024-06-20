@@ -22,6 +22,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'scope',
+        'company_id',
         'password',
         'profile_pic',
         'joining_date',
@@ -62,5 +64,10 @@ class User extends Authenticatable
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }
