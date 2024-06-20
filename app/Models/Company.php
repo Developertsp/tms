@@ -5,29 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
-class Department extends Model
+class Company extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
         'email',
-        'members',
-        'description',
-        'company_id',
+        'logo',
+        'joining_date',
+        'expiry_date',
+        'phone',
+        'whatsapp',
         'is_enable',
         'created_by',
         'updated_by',
     ];
 
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
-
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
 }
