@@ -59,4 +59,9 @@ class Task extends Model
     {
         return \Carbon\Carbon::parse($this->attributes['end_date'])->format('d-m-Y');
     }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }
