@@ -19,6 +19,23 @@
 
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
+                                <label for="department_id">Department Name</label>
+                                <select name="department_id" id="department_id" class="form-control">
+                                    <option value="" selected>Please select department</option>
+                                    @foreach ($deparments as $deparment)
+                                    <option value="{{ $deparment->id }}">{{ $deparment->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('department_id'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('department_id') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
                                 <label for="project_id">Project Name</label>
                                 <select name="project_id" id="project_id" class="form-control">
                                     <option value="" selected>Please select project</option>
@@ -109,9 +126,13 @@
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group fill">
-                                <label for="Task Title">Task Title</label>
-                                <input type="text" class="form-control" name="title" id="title" placeholder="Enter Task Title" required>
+                            <div class="form-group">
+                                <label for="description">Task Attachment</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="attachment" class="form-control" id="validatedCustomFile" required="">
+                                    <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                    <div class="invalid-feedback">Example invalid custom file feedback</div>
+                                </div>
                             </div>
                             @if ($errors->has('Task Title'))
                             <span class="help-block text-danger">
@@ -120,14 +141,10 @@
                             @endif
                         </div>
 
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="description">Task Attachment</label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="attachment" class="form-control" id="validatedCustomFile" required="">
-                                    <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                                    <div class="invalid-feedback">Example invalid custom file feedback</div>
-                                </div>
+                        <div class="col-12">
+                            <div class="form-group fill">
+                                <label for="Task Title">Task Title</label>
+                                <input type="text" class="form-control" name="title" id="title" placeholder="Enter Task Title" required>
                             </div>
                             @if ($errors->has('Task Title'))
                             <span class="help-block text-danger">
@@ -149,7 +166,7 @@
                         </div>
 
                     </div>
-                    <div>
+                    <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary w-md">Submit</button>
                     </div>
             </div>
