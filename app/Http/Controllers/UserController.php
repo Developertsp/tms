@@ -33,7 +33,7 @@ class UserController extends Controller
             $data['companies'] = Company::where('is_enable', 1)->pluck('name', 'id')->all();
         } else {
             $department_id = Auth::user()->department_id;
-            $data['users'] = $department_id ? User::where('department_id', $department_id)->where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get() : User::where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
+            $data['users'] = $department_id ? User::with('department')->where('department_id', $department_id)->where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get() : User::with('department')->where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
         }
 
         return view('users.list', $data);
