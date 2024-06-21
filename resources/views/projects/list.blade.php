@@ -21,7 +21,7 @@
                                 @if (system_role())
                                 <th> Company</th>
                                 @endif
-                                <th>Description</th>
+                                <th>Deadline</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -32,18 +32,21 @@
                                 @if (system_role())
                                 <td>{{ $project->company->name }}</td>
                                 @endif
-                                <td>{{ $project->description }}</td>
+                                <td>{{ $project->deadline }}</td>
                                 <td>
                                     {{-- <a class="btn btn-info" href="{{ route('roles.show', $role->id) }}">Show</a> --}}
                                     @can('update-projects')
-                                    <a class="btn btn-primary" href="{{ route('projects.edit', $project->id) }}">Edit</a>
+                                        <a class="btn btn-primary" href="{{ route('projects.edit', $project->id) }}">Edit</a>
                                     @endcan
                                     @can('delete-projects')
-                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
-                                    </form>
+                                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                        </form>
+                                    @endcan
+                                    @can('view-projects')
+                                        <a class="btn btn-primary" href="{{ route('projects.show', base64_encode($project->id)) }}">View</a>
                                     @endcan
                                 </td>
                             </tr>

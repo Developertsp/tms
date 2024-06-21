@@ -216,4 +216,18 @@ class UserController extends Controller
 
         return redirect()->route('users.profile')->with('success', 'User updated successfully');
     }
+
+    public function show($id)
+    {
+        $data['user'] = User::with('company:id,name')->find($id);
+        if (system_role()) {
+            $data['user_role'] = $data['user']->roles->pluck('name', 'name')->all();
+            $data['roles'] = Role::whereNull('company_id')->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
+            $data['companies'] = Company::where('is_enable', 1)->pluck('name', 'id')->all();
+        } else {
+            $data['roles'] = Role::where('company_id', user_company_id())->orderBy('id')->get();
+        }
+        $data['departments'] = Department::where('is_enable', 1)->get();
+        return view('users.edit', $data);
+    }
 }

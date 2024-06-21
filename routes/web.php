@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\CompanyController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProjectCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,7 @@ Route::post('users/store', [UserController::class, 'store'])->name('users.store'
 Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+Route::delete('users/show/{id}', [UserController::class, 'show'])->name('users.show');
 
 // User Profile Routes
 Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');
@@ -75,6 +77,8 @@ Route::post('projects/store', [ProjectController::class, 'store'])->name('projec
 Route::get('projects/edit/{id}', [ProjectController::class, 'edit'])->name('projects.edit');
 Route::post('projects/update', [ProjectController::class, 'update'])->name('projects.update');
 Route::delete('projects/destroy/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+Route::get('projects/show/{id}', [ProjectController::class, 'show'])->name('projects.show');
+Route::post('projects/comments/store', [ProjectCommentController::class, 'store'])->name('projects.comments.store');
 
 // Department Routes
 Route::get('departments', [DepartmentController::class, 'index'])->name('departments.list');
