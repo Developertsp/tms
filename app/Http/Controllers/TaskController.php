@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Task;
-use App\Models\User;
-use App\Models\Project;
-use App\Models\Attachment;
-use App\Models\Log;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\PushNotificationService;
+
+use App\Models\User;
+use App\Models\Task;
+use App\Models\Attachment;
+use App\Models\Project;
+use App\Models\Log;
 
 class TaskController extends Controller
 {
@@ -58,8 +59,9 @@ class TaskController extends Controller
 
     public function create()
     {
-        $data['users']      = User::where('is_enable', 1)->get();
-        $data['projects']   = Project::where('is_enable', 1)->get();
+        $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $data['departments']= Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['status']     = config('constants.STATUS_LIST');
         $data['priority']   = config('constants.PRIORITY_LIST');
 
