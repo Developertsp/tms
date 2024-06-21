@@ -13,6 +13,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectCommentController;
+use App\Http\Controllers\ProjectAttachmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,7 @@ Route::post('projects/update', [ProjectController::class, 'update'])->name('proj
 Route::delete('projects/destroy/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 Route::get('projects/show/{id}', [ProjectController::class, 'show'])->name('projects.show');
 Route::post('projects/comments/store', [ProjectCommentController::class, 'store'])->name('projects.comments.store');
+Route::post('projects/attachments/store', [ProjectAttachmentController::class, 'store'])->name('projects.attachments.store');
 
 // Department Routes
 Route::get('departments', [DepartmentController::class, 'index'])->name('departments.list');

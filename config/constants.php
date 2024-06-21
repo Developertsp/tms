@@ -26,11 +26,16 @@ return [
         'Deactive' => 2,
         'Deleted' => 3
     ],
-
     
     'DESIGNATION_SCOPE' => [
           'Manage All Departments' => 1,
           'Sepecific Department'  =>2,
           'Just Self'  => 3
+    ],
+
+    'PROJECT_STATUS_LIST' => [
+        1 => 'Running',
+        2 => 'Pause',
+        3 => 'Closed',
     ],
 ];
