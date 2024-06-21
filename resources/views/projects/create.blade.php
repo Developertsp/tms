@@ -45,14 +45,48 @@
                                 <textarea class="form-control" name="project_plan" id="project_plan" rows="5"></textarea>
                             </div>
                             @if ($errors->has('description'))
-                            <span class="help-block text-danger">
-                                {{ $errors->first('description') }}
-                            </span>
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('description') }}
+                                </span>
                             @endif
                         </div>
 
                         <div class="form-group row">
-                            <label for="name" class="col-sm-3 col-form-label">Refrence URL</label>
+                            <label for="department" class="col-sm-3 col-form-label">Departments</label>
+                            <div class="col-sm-9">
+                                <select name="department_id" id="department_id" class="form-control" required>
+                                    <option value="" selected>Select Department</option>
+                                    @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}" @if(old('department')==$department->id) selected @endif>{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('department_id'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('department_id') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="status" class="col-sm-3 col-form-label">Status</label>
+                            <div class="col-sm-9">
+                                <select name="status" id="status" class="form-control">
+                                    <option value="" selected>Select Status</option>
+                                    @foreach ($status as $key => $val)
+                                    <option value="{{ $key }}" @if(old('status')==$key) selected @endif>{{ $val }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('status'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('status') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-3 col-form-label">Refrence URL <span class="text-danger">(use * to separate multiple URLs)</span></label>
                             <div class="col-sm-9">
                                 <input type="text" name="ref_url" id="ref_url" value="{{ old('ref_url') }}" class="form-control" placeholder="Enter description">
                             </div>
@@ -71,23 +105,6 @@
                             @if ($errors->has('deadline'))
                             <span class="help-block text-danger">
                                 {{ $errors->first('deadline') }}
-                            </span>
-                            @endif
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="profile" class="col-sm-3 col-form-label">Attachments</label>
-                            <div class="col-sm-9">
-                                <div class="input-group mb-3">
-                                    <div class="custom-file">
-                                        <input type="file" name="project_files[]" id="project_files" class="custom-file-input" multiple> 
-                                        <label class="custom-file-label" for="project_files">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                            @if ($errors->has('project_files'))
-                            <span class="help-block text-danger">
-                                {{ $errors->first('project_files') }}
                             </span>
                             @endif
                         </div>

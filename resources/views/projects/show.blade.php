@@ -6,81 +6,28 @@
 
 <div class="row">
     
-    <!--  Modal for Logs -->
-    <div class="modal fade" id="logs_modal" tabindex="-1" role="dialog" aria-labelledby="logsModal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <!-- Modal for Attachments -->
+    <div id="attachments_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attachmentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="logsModal">Log History</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="exampleModalLiveLabel">Add Attachments</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    {{-- @foreach ($task->logs as $log)
-                        <p>Change status from {{ config('constants.STATUS_LIST')[$log->old_status] }} to {{ config('constants.STATUS_LIST')[$log->status] }} BY {{ $log->user->name}} <span class="float-end"> {{ $log->formatted_created_at}} </span></p>
-                        <hr>
-                    @endforeach --}}
+                    <form action="{{ route('projects.attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
+                        @csrf
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                    </form>
+                    <p>Maz file size is 2mb.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="upload-button" class="btn btn-primary">Upload</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->  
-
-    <!-- Modal for Status Change -->
-    <div id="status_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="status-modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="status-modalLabel">Status</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="px-3" action="{{ route('tasks.update') }}" method="post">
-                    @csrf
-                    {{-- <input type="hidden" name="task_id" value="{{ $task->id }}"> --}}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status:</label>
-                            <select class="form-select" name="status" id="status" aria-label="Task Status" required>
-                                {{-- @foreach ($status as $key => $val)
-                                    <option value="{{ $key }}" {{ $task->status == $key ? 'selected' : '' }} >{{ $val }}</option>
-                                @endforeach --}}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Modal for Attachments -->
-    <div id="attachments_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attachmentsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="attachmentsModal">Add Attachments</h4>
-                    {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <form action="{{ route('attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
-                            @csrf
-                            {{-- <input type="hidden" name="task_id" value="{{ $task->id }}"> --}}
-                        </form>
-                        <p>Maz file size is 2mb.</p>
-                        <div class="modal-footer">
-                            <button id="upload-button" class="btn btn-primary">Upload</button>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div> <!-- end card-body-->
-                </div> <!-- end card-->
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
 
 
     <div class="col-lg-12">
@@ -102,7 +49,9 @@
 
             <div>
                 <h2 class="card-title "><u> Refrence URLs </u></h2>
-                <p class="card-title">{{ $project->ref_url }}</p>
+                @foreach ($ref_url as $url)
+                    <p class="card-title"><a href="{{$url}}" target="_blank">{{ $url }}</a></p>
+                @endforeach
             </div>
 
             <div>
@@ -115,16 +64,16 @@
                 <i class="fa fa-paperclip m-r-10 m-b-10"></i> Attachments
             </div>
             <div class="col-md-12 col-xs-12">
-                <a data-toggle="modal" data-target="#ata_model" class="btn btn-primary btn-sm rounded-pill waves-effect waves-light">
+                <a data-toggle="modal" data-target="#attachments_modal" class="btn btn-primary btn-sm rounded-pill waves-effect waves-light">
                     <div data-bs-toggle="modal" data-bs-target="#attachments_modal">
                         <span class="btn-label task-span-margin-left-minus" ><i class="fa fa-plus"></i></span> <span class="" style=" text-transform: capitalize;">New Attachments </span>
                     </div>
                 </a>
             </div>
             <hr>
-            {{-- @foreach ($task->attachments as $attachment)
-                <h6> <a href="{{ asset('storage/tasks_file/'.$attachment->path ) }}" target="_blank">{{ $attachment->file_name }}</a> <span class="float-end"><a href="{{ asset('storage/tasks_file/'.$attachment->path ) }}" download><i class="fas fa-download"></i></a></span></h6>
-            @endforeach --}}
+            @foreach ($project->attachments as $attachment)
+                <h6> <a href="{{ asset('storage/projects_file/'.$attachment->path ) }}" target="_blank">{{ $attachment->file_name }}</a> <span class="float-end"><a href="{{ asset('storage/tasks_file/'.$attachment->path ) }}" download><i class="fas fa-download"></i></a></span></h6>
+            @endforeach
             <hr>
             <h5>Comments</h5>
             <form action="{{ route('projects.comments.store') }}" method="post" id="comment_form">
@@ -147,25 +96,6 @@
             @endforeach
         </div>
     </div>
-
-    {{-- <div class="col-lg-4">
-        <div class="card card-body">
-            <button type="button" class="btn btn-primary rounded-pill waves-effect waves-light mt-2" data-bs-toggle="modal" data-bs-target="#logs_modal">Task Log</button>
-            <p>
-                <h4>Status <span class="badge badge-soft-success float-end"> {{ config('constants.STATUS_LIST')[$task->status] }}</span> <i class="bx bx-edit float-end" data-bs-toggle="modal" data-bs-target="#status_modal"></i></h4>
-                <h4>Priority <span class="badge badge-soft-success float-end">{{ config('constants.PRIORITY_LIST')[$task->priority] }}</span></h4>
-                <h4>Project <span class="float-end">{{ $task->project->name }}</span></h4>
-                <h4>Created At <span class="float-end">{{ $task->formatted_created_at }}</span></h4>
-                <h4>Created By <span class="float-end">{{ $task->creator->name }}</span></h4>
-                <h4>Start Task <span class="float-end">{{ $task->formatted_start_date }}</span></h4>
-                <h4>End Task <span class="float-end">{{ $task->end_date ? $task->formatted_end_date : '' }}</span></h4>
-                <h4>Assign To </h4> 
-                <span class="float-end">@foreach ($task->users as $user)
-                    <span>{{ $user->name }}</span>@if(!$loop->last), @endif
-                @endforeach</span>
-            </p>
-        </div>
-    </div> --}}
 </div>
 
 @endsection

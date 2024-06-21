@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->text('plan')->nullable()->after('description');
-            $table->date('deadline')->nullable()->after('plan');
-            $table->text('ref_url')->nullable()->after('deadline');
+            $table->unsignedBigInteger('department_id')->nullable()->after('plan');
+            $table->tinyInteger('status')->nullable()->after('company_id');
         });
     }
 
@@ -24,9 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn('plan');
-            $table->dropColumn('deadline');
-            $table->dropColumn('ref_url');
+            $table->dropColumn('department_id');
+            $table->dropColumn('status');
         });
     }
 };

@@ -14,9 +14,11 @@ class Project extends Model
         'name',
         'description',
         'plan',
+        'department_id',
         'ref_url',
         'deadline',
         'company_id',
+        'status',
         'is_enable',
         'created_by',
         'updated_by',
@@ -35,5 +37,10 @@ class Project extends Model
     public function comments()
     {
         return $this->hasMany(ProjectComment::class);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ProjectAttachment::class);
     }
 }
