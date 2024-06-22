@@ -13,10 +13,17 @@ class Controller extends BaseController
     use AuthorizesRequests, ValidatesRequests;
 
     public $desi_scopes;
+    public $task_status;
+    public $task_preority;
     public function __construct()
     {
         $this->desi_scopes = config('constants.DESIGNATION_SCOPE');
+        $this->task_status = config('constants.STATUS_LIST');
+        $this->task_preority = config('constants.PRIORITY_LIST');
+        
         view()->share('desi_scopes', $this->desi_scopes);
+        view()->share('task_status', $this->task_status);
+        view()->share('task_preority', $this->task_preority);
     }
 
 }
