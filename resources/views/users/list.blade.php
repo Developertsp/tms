@@ -53,6 +53,7 @@
                     <table class="table" id="data_table">
                         <thead>
                             <tr>
+                                <th>Image</th>
                                 <th>Name</th>
                                 @if (system_role())
                                 <th> Company</th>
@@ -60,7 +61,6 @@
                                 <th>Role</th>
                                 <th>Email</th>
                                 <th>Department</th>
-                                <th>Image</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
