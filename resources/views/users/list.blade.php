@@ -53,7 +53,7 @@
                     <table class="table" id="data_table">
                         <thead>
                             <tr>
-                                <th>Image</th>
+                                <th></th>
                                 <th>Name</th>
                                 @if (system_role())
                                 <th> Company</th>
