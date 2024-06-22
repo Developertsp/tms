@@ -112,7 +112,7 @@
                     <div class="card-footer bg-c-red">
                         <div class="row align-items-center">
                             <div class="col-9">
-                                <p class="text-white m-b-0">% change</p>
+                                <p class="text-white m-b-0">0 % change</p>
                             </div>
                             <div class="col-3 text-right">
                                 <i class="feather icon-trending-down text-white f-16"></i>
@@ -157,7 +157,7 @@
                                 <h6 class="text-muted m-b-0"> Users</h6>
                             </div>
                             <div class="col-4 text-right">
-                                <i class="feather icon-thumbs-up f-28"></i>
+                                <i class="feather icon-bar-chart-2 f-28"></i>
                             </div>
                         </div>
                     </div>
@@ -174,12 +174,13 @@
                 </div>
             </div>
             @if(!system_role())
+
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h4 class="text-c-red">{{$departments ?? 0 }}</h4>
+                                <h4 class="text-c-yellow">{{$departments ?? 0 }}</h4>
                                 <h6 class="text-muted m-b-0">Deparments</h6>
                             </div>
                             <div class="col-4 text-right">
@@ -187,13 +188,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-c-red">
+                    <div class="card-footer bg-c-yellow">
                         <div class="row align-items-center">
                             <div class="col-9">
                                 <p class="text-white m-b-0">% change</p>
                             </div>
                             <div class="col-3 text-right">
-                                <i class="feather icon-trending-down text-white f-16"></i>
+                                <i class="feather icon-trending-up text-white f-16"></i>
                             </div>
                         </div>
                     </div>
@@ -205,15 +206,43 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h4 class="text-c-blue">{{$projects ?? 0 }} +</h4>
-                                <h6 class="text-muted m-b-0"> Projects</h6>
+                                <h4 class="text-c-green">{{$total_projects ?? 0 }} +</h4>
+                                <h6 class="text-muted m-b-0">Projects</h6>
                             </div>
                             <div class="col-4 text-right">
-                                <i class="feather icon-thumbs-up f-28"></i>
+                                <i class="feather icon-bar-chart f-28"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-c-blue">
+
+                    <div class="card-footer bg-c-green">
+                        <div class="row align-items-center">
+                            <div class="col-9">
+                                <p class="text-white m-b-0">% change</p>
+                            </div>
+                            <div class="col-3 text-right">
+                                <i class="feather icon-trending-up text-white f-16"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h4 class="text-c-red">{{$assignedCount ?? 0 }}</h4>
+                                <h6 class="text-muted m-b-0">Queue Task</h6>
+                            </div>
+                            <div class="col-4 text-right">
+                                <i class="feather icon-thumbs-down f-28"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-c-red">
                         <div class="row align-items-center">
                             <div class="col-9">
                                 <p class="text-white m-b-0">% change</p>
@@ -398,86 +427,25 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>
-                                    <!-- <div class="chk-option">
-                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
-                                            <input type="checkbox" class="custom-control-input">
-                                            <span class="custom-control-label"></span>
-                                        </label>
-                                    </div> -->
-                                    Assigned
-                                </th>
                                 <th>Name</th>
                                 <th>Due Date</th>
-                                <th class="text-right">Priority</th>
+                                <th class="text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($projects as $key => $project)
                             <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <img src="assets/images/user/avatar-4.jpg" alt="user image" class="img-radius wid-40 align-top m-r-15">
-                                        <div class="d-inline-block">
-                                            <h6>John Deo</h6>
-                                            <p class="text-muted m-b-0">Graphics Designer</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Able Pro</td>
-                                <td>Jun, 26</td>
-                                <td class="text-right"><label class="badge badge-light-danger">Low</label></td>
+                                <td>{{$project->name ?? '' }}</td>
+                                <td>{{$project->deadline ?? '' }}</td>
+                                <td class="text-right"><label class="badge badge-light-danger">{{ $proj_status[$project->status] ?? '' }}</label></td>
                             </tr>
-                            <tr>
-                                <td>
-
-                                    <div class="d-inline-block align-middle">
-                                        <img src="assets/images/user/avatar-2.jpg" alt="user image" class="img-radius wid-40 align-top m-r-15">
-                                        <div class="d-inline-block">
-                                            <h6>Jenifer Vintage</h6>
-                                            <p class="text-muted m-b-0">Web Designer</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Mashable</td>
-                                <td>March, 31</td>
-                                <td class="text-right"><label class="badge badge-light-primary">high</label></td>
-                            </tr>
-                            <tr>
-                                <td>
-
-                                    <div class="d-inline-block align-middle">
-                                        <img src="assets/images/user/avatar-3.jpg" alt="user image" class="img-radius wid-40 align-top m-r-15">
-                                        <div class="d-inline-block">
-                                            <h6>William Jem</h6>
-                                            <p class="text-muted m-b-0">Developer</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Flatable</td>
-                                <td>Aug, 02</td>
-                                <td class="text-right"><label class="badge badge-light-success">medium</label></td>
-                            </tr>
-                            <tr>
-                                <td>
-
-                                    <div class="d-inline-block align-middle">
-                                        <img src="assets/images/user/avatar-2.jpg" alt="user image" class="img-radius wid-40 align-top m-r-15">
-                                        <div class="d-inline-block">
-                                            <h6>David Jones</h6>
-                                            <p class="text-muted m-b-0">Developer</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Guruable</td>
-                                <td>Sep, 22</td>
-                                <td class="text-right"><label class="badge badge-light-primary">high</label></td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
                 <hr>
                 <div class="text-center mb-3">
-                    <a href="#!" class="b-b-primary text-primary">View all Projects</a>
+                    <a href="{{route('projects.list')}}" class="b-b-primary text-primary">View all Projects</a>
                 </div>
             </div>
         </div>

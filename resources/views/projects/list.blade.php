@@ -14,7 +14,7 @@
             </div>
             <div class="card-body table-border-style">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="data_table">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -38,17 +38,17 @@
                                 <td>
                                     {{-- <a class="btn btn-info" href="{{ route('roles.show', $role->id) }}">Show</a> --}}
                                     @can('update-projects')
-                                        <a class="btn btn-primary" href="{{ route('projects.edit', $project->id) }}">Edit</a>
+                                        <a class="btn btn-primary  rounded-pill px-4 py-1" href="{{ route('projects.edit', $project->id) }}">Edit</a>
                                     @endcan
                                     @can('delete-projects')
                                         <form action="{{ route('projects.destroy', $project->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4 py-1" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                                         </form>
                                     @endcan
                                     @can('view-projects')
-                                        <a class="btn btn-primary" href="{{ route('projects.show', base64_encode($project->id)) }}">View</a>
+                                        <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('projects.show', base64_encode($project->id)) }}">View</a>
                                     @endcan
                                 </td>
                             </tr>
@@ -65,6 +65,6 @@
 
 @section('script')
 <script>
-    $('#projects-datatable').DataTable();
+    $('#data_table').DataTable();
 </script>
 @endsection

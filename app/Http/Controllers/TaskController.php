@@ -15,12 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\PushNotificationService;
 
-use App\Models\User;
-use App\Models\Task;
-use App\Models\Attachment;
-use App\Models\Project;
-use App\Models\Department;
-use App\Models\Log;
 
 class TaskController extends Controller
 {

@@ -14,7 +14,7 @@
             </div>
             <div class="card-body table-border-style">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="data_table">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -40,13 +40,13 @@
 
                                 <td>
                                     @can('update-departments')
-                                    <a class="btn btn-primary" href="{{ route('departments.edit', $department->id) }}">Edit</a>
+                                    <a class="btn btn-primary  rounded-pill px-4 py-1" href="{{ route('departments.edit', $department->id) }}">Edit</a>
                                     @endcan
                                     @can('delete-departments')
                                     <form action="{{ route('departments.destroy', $department->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-1" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                                     </form>
                                     @endcan
                                 </td>
@@ -63,6 +63,6 @@
 
 @section('script')
 <script>
-    $('#departments-datatable').DataTable();
+    $('#data_table').DataTable();
 </script>
 @endsection

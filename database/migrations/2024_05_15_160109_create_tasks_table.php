@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->integer('project_id');
+            $table->unsignedBigInteger('department_id');
             $table->tinyInteger('priority');
             $table->tinyInteger('status')->default(1);
             $table->tinyInteger('is_enable')->default(1);

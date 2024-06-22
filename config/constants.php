@@ -1,11 +1,13 @@
 <?php
 
 return [
+    
     'STATUS_LIST' => [
         1 => 'Assigned',
         2 => 'Work Started',
         3 => 'Closed',
     ],
+
     'TASK_STATUS' => [
          'Assigned'  =>1,
          'Work Started' =>2,

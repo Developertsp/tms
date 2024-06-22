@@ -50,7 +50,7 @@
             </div>
             <div class="card-body table-border-style">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="data_table">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -67,6 +67,9 @@
                         <tbody>
                             @foreach ($users as $user)
                             <tr>
+                                <td>
+                                    <img class="img-radius" src="{{ asset('storage/profile_pics/'.$user->profile_pic) }}" alt="User-Profile-Image" width="50px" height="50px">
+                                </td>
                                 <td>{{ $user->name }}</td>
                                 @if (system_role())
                                 <td>{{ $user->company->name }}</td>
@@ -75,21 +78,18 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->department_id ? $user->department->name : 'All Departments'}}</td>
                                 <td>
-                                    <img class="img-radius" src="{{ asset('storage/profile_pics/'.$user->profile_pic) }}" alt="User-Profile-Image" width="50px" height="50px">
-                                </td>
-                                <td>
                                     {{-- <a class="btn btn-info" href="{{ route('roles.show', $role->id) }}">Show</a> --}}
                                     @can('update-users')
-                                    <a class="btn btn-primary" href="{{ route('users.edit', $user->id) }}">Edit</a>
+                                    <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('users.edit', $user->id) }}">Edit</a>
                                     @endcan
                                     @can('delete-users')
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-1" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
                                     </form>
                                     @endcan
-                                    {{-- <button type="button" class="btn btn-primary view-button" data-toggle="modal" data-target="#userDetailModal">View</button> --}}
+                                    {{-- <button type="button" class="btn btn-primary view-button rounded-pill px-4 py-1"  data-toggle="modal" data-target="#userDetailModal">View</button> --}}
                                 </td>
                             </tr>
                             @endforeach
@@ -104,8 +104,9 @@
 @endsection
 
 @section('script')
+
 <script>
-    $('#users-datatable').DataTable();
+    $('#data_table').DataTable();
 
     $(document).ready(function() {
         $('.view-button').on('click', function() {
