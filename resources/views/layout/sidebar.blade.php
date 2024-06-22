@@ -4,7 +4,7 @@
 
             <div class="">
                 <div class="main-menu-header">
-                    <img class="img-radius" src="{{ asset('storage/profile_pics/'.$user->profile_pic) }}" alt="User-Profile-Image">
+                    <img class="img-radius" src="{{ asset('storage/profile_pics/'.Auth()->User()->profile_pic) }}" alt="User-Profile-Image">
                     <div class="user-details">
                         <div id="more-details">UX Designer <i class="fa fa-caret-down"></i></div>
                     </div>
