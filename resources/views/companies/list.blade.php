@@ -14,7 +14,7 @@
                 </div>
                 <div class="card-body table-border-style">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" id="data_table">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -37,13 +37,13 @@
                                         <td>{{ $company->expiry_date }}</td>
                                         <td>
                                             @can('update-companies')
-                                            <a class="btn btn-primary" href="{{ route('companies.edit', $company->id) }}">Edit</a>
+                                            <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('companies.edit', $company->id) }}">Edit</a>
                                             @endcan
                                             @can('delete-companies')
                                             <form action="{{ route('companies.destroy', $company->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this company?');">Delete</button>
+                                                <button type="submit" class="btn btn-danger rounded-pill px-4 py-1" onclick="return confirm('Are you sure you want to delete this company?');">Delete</button>
                                             </form>
                                             @endcan
                                         </td>
@@ -61,6 +61,6 @@
 
 @section('script')
 <script>
-    $('#users-datatable').DataTable();
+    $('#data_table').DataTable();
 </script>
 @endsection

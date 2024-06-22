@@ -106,17 +106,14 @@
                 @endcan
 
                 <li class="nav-item pcoded-menu-caption">
-                    <label>Pages</label>
+                    <label>Settings</label>
                 </li>
                 <li class="nav-item pcoded-hasmenu">
-                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Authentication</span></a>
+                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Auth Settings</span></a>
                     <ul class="pcoded-submenu">
                         <li><a href="#">Account Setting</a></li>
                         <li><a href="#">Porile Setting</a></li>
                     </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample page</span></a>
                 </li>
             </ul>
         </div>
