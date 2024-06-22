@@ -6,6 +6,12 @@ return [
         2 => 'Work Started',
         3 => 'Closed',
     ],
+    'TASK_STATUS' => [
+         'Assigned'  =>1,
+         'Work Started' =>2,
+         'Closed' =>3,
+    ],
+
 
     'PRIORITY_LIST' => [
         1 => 'High',

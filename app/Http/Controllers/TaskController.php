@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Task;
 use App\Models\Attachment;
 use App\Models\Project;
+use App\Models\Department;
 use App\Models\Log;
 
 class TaskController extends Controller
@@ -24,6 +25,7 @@ class TaskController extends Controller
         $this->middleware('permission:create-tasks', ['only' => ['create','store']]);
         $this->middleware('permission:update-tasks', ['only' => ['edit','update']]);
         $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
+        parent::__construct();
     }
 
     public function index()
