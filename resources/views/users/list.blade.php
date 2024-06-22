@@ -73,7 +73,7 @@
                                 @endif
                                 <td>{{ filter_company_id($user->roles->first()->name) }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>Department</td>
+                                <td>{{ $user->department_id ? $user->department->name : 'All Departments'}}</td>
                                 <td>
                                     <img class="img-radius" src="{{ asset('storage/profile_pics/'.$user->profile_pic) }}" alt="User-Profile-Image" width="50px" height="50px">
                                 </td>

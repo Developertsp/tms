@@ -23,11 +23,16 @@ class Department extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }

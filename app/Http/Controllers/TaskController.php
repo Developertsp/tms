@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Log;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\Project;
+use App\Models\Attachment;
+
+use App\Models\Department;
 use App\Models\Notification;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Services\PushNotificationService;
 
 use App\Models\User;
@@ -39,14 +46,17 @@ class TaskController extends Controller
             $data['tasks'] = Task::whereHas('users', function ($query) use ($department_id) {
                 $query->where('department_id', $department_id);
             })->where('is_enable', 1)
-              ->with('project', 'users', 'creator')
+              ->with('project', 'department', 'users', 'creator')
               ->orderBy('id', 'desc')
               ->get();
         }
         else{
-            $data['tasks'] = Task::where('is_enable', 1)->with('project', 'users', 'creator')->orderBy('id', 'desc')->get();
+            $data['tasks'] = Task::where('is_enable', 1)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
         }
 
+        $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        
         return view('tasks.list', $data);
     }
 
@@ -92,6 +102,7 @@ class TaskController extends Controller
         $task['created_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
         $task['end_date']       = $request->end_date ?? NULL;
+        $task['department_id']  = $request->department_id;
 
         $response = $task->save();
 

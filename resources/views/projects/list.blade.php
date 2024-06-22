@@ -18,8 +18,9 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Status</th>
                                 @if (system_role())
-                                <th> Company</th>
+                                    <th> Company</th>
                                 @endif
                                 <th>Deadline</th>
                                 <th>Action</th>
@@ -29,6 +30,7 @@
                             @foreach ($projects as $project)
                             <tr>
                                 <td>{{ $project->name }}</td>
+                                <td>{{ $project->status ? config('constants.PROJECT_STATUS_LIST')[$project->status] : '' }}</td>
                                 @if (system_role())
                                 <td>{{ $project->company->name }}</td>
                                 @endif
