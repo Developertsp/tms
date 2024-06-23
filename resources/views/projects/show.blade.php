@@ -5,31 +5,6 @@
 @section('content')
 
 <div class="row">
-
-    <!-- Modal for Attachments -->
-    <div id="attachments_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attachmentsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLiveLabel">Add Attachments</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('projects.attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
-                        @csrf
-                        <input type="hidden" name="project_id" value="{{ $project->id }}">
-                    </form>
-                    <p>Maz file size is 2mb.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="upload-button" class="btn btn-primary">Upload</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <div class="col-lg-12">
         <div class="card card-body">
             <div>
@@ -103,6 +78,38 @@
     </div>
 </div>
 
+
+
+<!-- Modal for Attachments -->
+<div class="modal fade" id="attachments_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="status_modalLabel">Add Attachments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('projects.attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
+                            @csrf
+                            <input type="hidden" name="project_id" value="{{ $project->id }}">
+                        </form>
+                        <p>Maz file size is 2mb.</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                            <button id="upload-button" class="btn btn-primary rounded py-1">Upload</button>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
 @endsection
 
 @section('script')

@@ -65,7 +65,7 @@
 
     <div class="col-lg-4">
         <div class="card card-body pb-5">
-            <button type="button" class="btn btn-primary rounded-pill waves-effect waves-light mt-2 py-1 fw-bold" data-toggle="modal" data-target="#logs_modal"> <span class="text-white"><i class="fas fa-eye"></i> </span>  Task Log</button>
+            <button type="button" class="btn btn-primary rounded-pill waves-effect waves-light mt-2 py-1 fw-bold" data-toggle="modal" data-target="#logs_modal"> <span class="text-white"><i class="fas fa-eye"></i> </span> Task Log</button>
             <div class="d-flex justify-content-between mt-4">
                 <h5>Name:</h5>
                 <h5><span class="badge badge-soft-success float-end"> {{ $task->project->name }} </span></h5>
@@ -107,12 +107,12 @@
 </div>
 
 <!--  Modal for Logs -->
-<div class="modal fade" id="logs_modal" tabindex="-1" role="dialog" aria-labelledby="logsModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+<div class="modal fade bd-example-modal-lg" id="logs_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="logsModal">Log History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title h4" id="myLargeModalLabel">LOG History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 @foreach ($task->logs as $log)
@@ -120,29 +120,58 @@
                 <hr>
                 @endforeach
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
 
-<!-- Modal for Status Change -->
-<div id="status_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="status-modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal for Attachments -->
+<div class="modal fade" id="attachments_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="status-modalLabel">Status</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="status_modalLabel">Add Attachments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <form class="px-3" action="{{ route('tasks.update') }}" method="post">
-                @csrf
-                <input type="hidden" name="task_id" value="{{ $task->id }}">
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
+                            @csrf
+                            <input type="hidden" name="task_id" value="{{ $task->id }}">
+                        </form>
+                        <p>Maz file size is 2mb.</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                            <button id="upload-button" class="btn btn-primary rounded py-1">Upload</button>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
+
+<!-- Modal for Status Change -->
+<div class="modal fade" id="status_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="status_modalLabel">Change Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="task_status_from" action="{{ route('tasks.update') }}" method="post">
                 <div class="modal-body">
-                    <div class="form-group fill mb-3">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+                    <div class="form-group mb-2">
                         <label style="cursor:pointer;" for="status">Change Status: </label>
                         <select style="cursor:pointer;" class="form-control" name="status" id="status" required>
-                            <option value="" selected> Select task Status</option>
+                            <option value="" selected disabled> Select task Status</option>
                             @foreach ($status as $key => $val)
                             <option value="{{ $key }}" {{ $task->status == $key ? 'selected' : '' }}>{{ $val }}</option>
                             @endforeach
@@ -153,41 +182,16 @@
                         {{ $errors->first('status') }}
                     </span>
                     @endif
-
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                    <button type="submit" for="task_status_from" class="btn  btn-primary rounded py-1">Update Status</button>
                 </div>
             </form>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
-<!-- Modal for Attachments -->
-<div id="attachments_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attachmentsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="attachmentsModal">Add Attachments</h4>
-                {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
-                        @csrf
-                        <input type="hidden" name="task_id" value="{{ $task->id }}">
-                    </form>
-                    <p>Maz file size is 2mb.</p>
-                    <div class="modal-footer">
-                        <button id="upload-button" class="btn btn-primary">Upload</button>
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 @endsection
 

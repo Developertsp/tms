@@ -104,7 +104,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="start_date">Start Date</label>
-                                <input type="date" class="form-control" name="start_date" id="start_date">
+                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="start_date" id="start_date">
                             </div>
                             @if ($errors->has('start_date'))
                             <span class="help-block text-danger">
@@ -116,7 +116,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="end_date">End Date</label>
-                                <input type="date" class="form-control" name="end_date" id="end_date">
+                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="end_date" id="end_date">
                             </div>
                             @if ($errors->has('end_date'))
                             <span class="help-block text-danger">
