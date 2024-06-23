@@ -311,7 +311,7 @@ class TaskController extends Controller
             if ($performance === 'D_Missed') {
                 $query->where(function ($query) {
                     $query->where('status', '<>', 3)
-                        ->where('end_date', '<', now());
+                        ->where('end_date', '<', now()->format('Y-m-d'));
                 });
             } elseif ($performance === 'D_Achieved') {
                 $query->where(function ($query) {
