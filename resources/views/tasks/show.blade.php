@@ -53,7 +53,7 @@
                 @csrf
                 <input type="hidden" name="task_id" id="task_id" value="{{ $task->id }}">
                 <div class="mb-3">
-                    <textarea class="form-control" name="comment" placeholder="Write comment here" id="comment" required></textarea>
+                    <textarea class="form-control" name="comment" placeholder="Write comment here" id="comment" required=""></textarea>
                 </div>
                 <div class="float-right">
                     <button type="submit" class="btn btn-primary w-md ">Submit</button>
@@ -65,18 +65,21 @@
 
     <div class="col-lg-4">
         <div class="card card-body pb-5">
-            <button type="button" class="btn btn-primary rounded-pill waves-effect waves-light mt-2 py-1 fw-bold" data-toggle="modal" data-target="#logs_modal"> <span class="text-white"><i class="fas fa-eye"></i> </span>  Task Log</button>
+            <button type="button" class="btn btn-primary rounded-pill waves-effect waves-light mt-2 py-1 fw-bold">
+                <h6 class="text-white fw-bold mt-1">Tracking & Updation | <i class="fa fa-edit float-right mx-2 mt-1" style="cursor:pointer;" data-toggle="modal" data-target="#details_modal"></i> <i class="fas fa-eye float-right mx-1 mt-1" data-toggle="modal" data-target="#logs_modal"></i> </h6>
+            </button>
+
             <div class="d-flex justify-content-between mt-4">
-                <h5>Name:</h5>
+                <h5>Pro. Name:</h5>
                 <h5><span class="badge badge-soft-success float-end"> {{ $task->project->name }} </span></h5>
             </div>
 
             <div class="d-flex justify-content-between">
-                <h5>Status:</h5>
-                <h5><span class="badge badge-soft-success float-end btn {{ (config('constants.STATUS_LIST')[$task->status] == 'Assigned') ? 'btn-primary' : ((config('constants.STATUS_LIST')[$task->status] == 'Closed') ? 'btn-success' : 'btn-secondary' ) }}  rounded-pill py-1 px-2"> {{ config('constants.STATUS_LIST')[$task->status] }}</span> <i class="fa fa-edit float-end" style="cursor:pointer;" data-toggle="modal" data-target="#status_modal"></i></h5>
+                <h5>Task Status:</h5>
+                <h5><span class="badge badge-soft-success float-end btn {{ (config('constants.STATUS_LIST')[$task->status] == 'Assigned') ? 'btn-primary' : ((config('constants.STATUS_LIST')[$task->status] == 'Closed') ? 'btn-success' : 'btn-secondary' ) }}  rounded-pill py-1 px-3"> {{ config('constants.STATUS_LIST')[$task->status] }}</span> </h5>
             </div>
             <div class="d-flex justify-content-between ">
-                <h5>Priority:</h5>
+                <h5>Task Priority:</h5>
                 <h5><span class="badge badge-soft-success float-end btn {{ (config('constants.PRIORITY_LIST')[$task->priority] == 'Medium') ? 'btn-warning' : ((config('constants.PRIORITY_LIST')[$task->priority] == 'High') ? 'btn-danger' : 'btn-secondary' ) }}  rounded-pill py-1 px-4"> {{ config('constants.PRIORITY_LIST')[$task->priority] }}</span></h5>
             </div>
             <div class="d-flex justify-content-between ">
@@ -84,16 +87,16 @@
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->formatted_created_at }}</span> </h5>
             </div>
             <div class="d-flex justify-content-between ">
-                <h5>Created By:</h5>
-                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->creator->name }}</span> </h5>
-            </div>
-            <div class="d-flex justify-content-between ">
-                <h5>Start Task:</h5>
+                <h5>Task Start:</h5>
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->formatted_start_date }}</span> </h5>
             </div>
             <div class="d-flex justify-content-between ">
-                <h5>End Task:</h5>
+                <h5>Task End:</h5>
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> </h5>
+            </div>
+            <div class="d-flex justify-content-between ">
+                <h5>Assigned By:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->creator->name }}</span> </h5>
             </div>
             <h5>Assign To: </h5>
             <span class="float-end px-5">
@@ -107,12 +110,12 @@
 </div>
 
 <!--  Modal for Logs -->
-<div class="modal fade" id="logs_modal" tabindex="-1" role="dialog" aria-labelledby="logsModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+<div class="modal fade bd-example-modal-lg" id="logs_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="logsModal">Log History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title h4" id="myLargeModalLabel">LOG History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 @foreach ($task->logs as $log)
@@ -120,74 +123,215 @@
                 <hr>
                 @endforeach
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!-- Modal for Status Change -->
-<div id="status_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="status-modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="status-modalLabel">Status</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form class="px-3" action="{{ route('tasks.update') }}" method="post">
-                @csrf
-                <input type="hidden" name="task_id" value="{{ $task->id }}">
-                <div class="modal-body">
-                    <div class="form-group fill mb-3">
-                        <label style="cursor:pointer;" for="status">Change Status: </label>
-                        <select style="cursor:pointer;" class="form-control" name="status" id="status" required>
-                            <option value="" selected> Select task Status</option>
-                            @foreach ($status as $key => $val)
-                            <option value="{{ $key }}" {{ $task->status == $key ? 'selected' : '' }}>{{ $val }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @if ($errors->has('status'))
-                    <span class="help-block text-danger">
-                        {{ $errors->first('status') }}
-                    </span>
-                    @endif
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
 
 <!-- Modal for Attachments -->
-<div id="attachments_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="attachmentsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
+<div class="modal fade" id="attachments_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="attachmentsModal">Add Attachments</h4>
-                {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+                <h5 class="modal-title" id="status_modalLabel">Add Attachments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
-                        @csrf
-                        <input type="hidden" name="task_id" value="{{ $task->id }}">
-                    </form>
-                    <p>Maz file size is 2mb.</p>
-                    <div class="modal-footer">
-                        <button id="upload-button" class="btn btn-primary">Upload</button>
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('attachments.store')}}" method="post" enctype="multipart/form-data" class="dropzone" id="file-dropzone">
+                            @csrf
+                            <input type="hidden" name="task_id" value="{{ $task->id }}">
+                        </form>
+                        <p>Maz file size is 2mb.</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                            <button id="upload-button" class="btn btn-primary rounded py-1">Upload</button>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
+<!-- Modal for details Change -->
+<div class="modal fade" id="details_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="status_modalLabel">Update Task Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="task_status_from" action="{{ route('tasks.update') }}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+
+                    <div class="row">
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="department_id">Department Name</label>
+                                <select name="department_id" id="department_id" class="form-control">
+                                    <option value="" selected>Please select department</option>
+                                    @foreach ($departments as $deparment)
+                                    <option value="{{ $deparment->id }}" {{ $deparment->id == $task->department_id ? 'selected' : '' }}>{{ $deparment->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('department_id'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('department_id') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="project_id">Project Name</label>
+                                <select name="project_id" id="project_id" class="form-control">
+                                    <option value="" selected>Please select project</option>
+                                    @foreach ($projects as $project)
+                                    <option value="{{ $project->id }}" {{ $project->id == $task->project_id ? 'selected' : '' }}>{{ $project->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('project_id'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('project_id') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="priority">Priority</label>
+                                <select name="priority" id="priority" class="form-control">
+                                    <option value="" selected>Select Task Priority</option>
+                                    @foreach ($task_preority as $key => $val)
+                                    <option value="{{ $key }}" {{ $task->priority == $key  ? 'selected' : '' }}>{{ $val }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('priority'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('priority') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    @foreach ($task_status as $key => $val)
+                                    <option value="{{ $key }}" {{ $task->status == $key ? 'selected' : '' }}>{{ $val }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('status'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('status') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="status">Assign To</label>
+                                <select name="assign_to[]" id="assign_to" class="form-control">
+                                    <option value="" selected>Please select one from blow</option>
+                                    @foreach ($users as $user)
+                                    <option value="{{ $user->id }}" {{ (isset($assignedUsers[$user->id]) && $assignedUsers[$user->id] == $user->name)  ? 'selected' : '' }}>{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if ($errors->has('assign_to'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('assign_to') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="start_date">Start Date</label>
+                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="start_date" value="{{ old('start_date',$task->start_date ?? '')}}" id="start_date">
+                            </div>
+                            @if ($errors->has('start_date'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('start_date') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="end_date">End Date</label>
+                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="end_date" value="{{ old('end_date',$task->end_date ?? '')}}" id="end_date">
+                            </div>
+                            @if ($errors->has('end_date'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('end_date') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="description">Task Attachment</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="attachment" class="form-control" id="validatedCustomFile" >
+                                    <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                    <div class="invalid-feedback">Example invalid custom file feedback</div>
+                                </div>
+                            </div>
+                            @if ($errors->has('Task Title'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('Task Title') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group fill">
+                                <label for="Task Title">Task Title</label>
+                                <input type="text" class="form-control" name="title" id="title" placeholder="Enter Task Title" value="{{ old('title',$task->title ?? '')}}" required="">
+                            </div>
+                            @if ($errors->has('Task Title'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('Task Title') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description">Task Description</label>
+                                <textarea class="form-control" name="description" placeholder="Write description here" id="description" required="" rows="3"> {{ old('description',$task->description ?? '')}}</textarea>
+                            </div>
+                            @if ($errors->has('description'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('description') }}
+                            </span>
+                            @endif
+                        </div>
+
                     </div>
-                </div> <!-- end card-body-->
-            </div> <!-- end card-->
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                    <button type="submit" for="task_status_from" class="btn  btn-primary rounded py-1">Update Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 

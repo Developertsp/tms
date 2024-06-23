@@ -22,7 +22,7 @@ class Controller extends BaseController
         $this->desi_scopes = config('constants.DESIGNATION_SCOPE');
         $this->task_status = config('constants.STATUS_LIST');
         $this->proj_status = config('constants.STATUS_LIST');
-        $this->task_preority = config('constants.proj_status');
+        $this->task_preority = config('constants.PRIORITY_LIST');
         
         view()->share('desi_scopes', $this->desi_scopes);
         view()->share('task_status', $this->task_status);
