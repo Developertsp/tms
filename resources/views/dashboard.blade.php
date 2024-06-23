@@ -228,14 +228,13 @@
                 </div>
             </div>
 
-
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h4 class="text-c-red">{{$assignedCount ?? 0 }}</h4>
-                                <h6 class="text-muted m-b-0">Queue Task</h6>
+                                <h4 class="text-c-red">{{$missedCount ?? 0 }}</h4>
+                                <h6 class="text-muted m-b-0">Missed Task</h6>
                             </div>
                             <div class="col-4 text-right">
                                 <i class="feather icon-thumbs-down f-28"></i>
@@ -259,8 +258,8 @@
         <!-- page statustic card end -->
     </div>
 
-    <!-- prject ,team member start -->
-    <div class="col-xl-8 col-md-12">
+    <!-- prject , start -->
+    <div class="col-xl-8 col-md-12 d-none">
         <div class="card latest-update-card">
             <div class="card-header">
                 <h5>Latest Updates</h5>
@@ -335,7 +334,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-12">
+    <div class="col-lg-4 col-md-12 d-none">
         <div class="card chat-card">
             <div class="card-header">
                 <h5>Chat</h5>

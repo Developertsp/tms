@@ -164,18 +164,17 @@
             table.column(2).search(selectedValue).draw();
         });
 
-        // Filter for department
-        $('#departmentFilter').on('change', function() {
+        // Filter for users
+        $('#userFilter').on('change', function() {
             var selectedValue = $(this).val();
             table.column(5).search(selectedValue).draw();
         });
 
-        // Filter for users
-        $('#userFilter').on('change', function() {
+        // Filter for department
+        $('#departmentFilter').on('change', function() {
             var selectedValue = $(this).val();
-            table.column(4).search(selectedValue).draw();
+            table.column(6).search(selectedValue).draw();
         });
-
 
         // Filter for performance
         $('#perfromanceFilter').on('change', function() {

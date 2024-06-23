@@ -6,12 +6,12 @@
                 <div class="main-menu-header">
                     <img class="img-radius" src="{{ asset('storage/profile_pics/'.Auth()->User()->profile_pic) }}" alt="Profile">
                     <div class="user-details">
-                        <div id="more-details">UX Designer <i class="fa fa-caret-down"></i></div>
+                        <div id="more-details">{{Auth()->User()->roles->toArray()[0]['name'] ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
                     </div>
                 </div>
-                <div class="collapse" id="nav-user-link">
+                <div class="collapse" id="nav-user-link d-none">
                     <ul class="list-unstyled">
-                        <li class="list-group-item"><a href="user-profile.html"><i class="feather icon-user m-r-5"></i>View Profile</a></li>
+                        <li class="list-group-item"><a href="#!"><i class="feather icon-user m-r-5"></i>View Profile</a></li>
                         <li class="list-group-item"><a href="#!"><i class="feather icon-settings m-r-5"></i>Settings</a></li>
 
                         <li class="list-group-item">
@@ -101,18 +101,20 @@
                         <li><a href="{{ route('tasks.create') }}">Add New</a></li>
                         @endcan
                         <li><a href="{{ route('tasks.list') }}">List</a></li>
+                        <li><a href="{{ route('tasks.report') }}">Reports</a></li>
                     </ul>
                 </li>
                 @endcan
 
-                <li class="nav-item pcoded-menu-caption">
+                <li class="nav-item pcoded-menu-caption ">
                     <label>Settings</label>
                 </li>
-                <li class="nav-item pcoded-hasmenu">
-                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Auth Settings</span></a>
+                
+                <li class="nav-item pcoded-hasmenu ">
+                    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-bell"></i></span><span class="pcoded-mtext">Notifications</span></a>
                     <ul class="pcoded-submenu">
-                        <li><a href="#">Account Setting</a></li>
-                        <li><a href="#">Porile Setting</a></li>
+                        <li><a href="{{ route('notifications.list') }}">All Notification</a></li>
+                        <!-- <li><a href="#">Porile Setting</a></li> -->
                     </ul>
                 </li>
             </ul>

@@ -60,7 +60,8 @@ class DashboardController extends Controller
             $data['assignedCount'] = Task::where('is_enable', 1)->where('status', 1)->count();
             $data['workStartedCount'] = Task::where('is_enable', 1)->where('status', 2)->count();
             $data['closedCount'] = Task::where('is_enable', 1)->where('status', 3)->count();
-
+            $data['missedCount'] = Task::where('is_enable', 1)->where('status', '!=', 3)->whereDate('end_date', '<', \Carbon\Carbon::now()->format('Y-m-d'))->count();
+            
             // Today Count all tasks
             $data['todayTotalCount'] = Task::where('is_enable', 1)->whereDate('created_at', $today)->count();
             // Count Today tasks with specific statuses
