@@ -143,7 +143,7 @@
                             @csrf
                             <input type="hidden" name="task_id" value="{{ $task->id }}">
                         </form>
-                        <p>Maz file size is 2mb.</p>
+                        <p>Maz file size is 10mb.</p>
                         <div class="modal-footer">
                             <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
                             <button id="upload-button" class="btn btn-primary rounded py-1">Upload</button>
@@ -283,12 +283,24 @@
 
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group">
-                                <label for="description">Task Attachment</label>
+                                <label for="description">Task Attachment Url</label>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="attachment" class="form-control" id="validatedCustomFile" >
-                                    <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                    <label class="custom-file-label" for="file_url">Choose file...</label>
+                                    <input type="text" class="form-control" name="file_url" class="form-control" id="file_url" >
                                     <div class="invalid-feedback">Example invalid custom file feedback</div>
                                 </div>
+                            </div>
+                            @if ($errors->has('Task Title'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('Task Title') }}
+                            </span>
+                            @endif
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="Task Title">Task Title</label>
+                                <input type="text" class="form-control" name="title" id="title" placeholder="Enter Task Title" value="{{ old('title',$task->title ?? '')}}" required="">
                             </div>
                             @if ($errors->has('Task Title'))
                             <span class="help-block text-danger">
@@ -339,7 +351,7 @@
 <script>
     Dropzone.options.fileDropzone = {
         autoProcessQueue: false,
-        maxFilesize: 2, // MB
+        maxFilesize: 10, // MB
         parallelUploads: 10,
         addRemoveLinks: true,
         dictRemoveFile: 'Remove',
