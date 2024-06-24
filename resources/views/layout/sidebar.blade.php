@@ -6,7 +6,7 @@
                 <div class="main-menu-header">
                     <img class="img-radius" src="{{ asset('storage/profile_pics/'.Auth()->User()->profile_pic) }}" alt="Profile">
                     <div class="user-details">
-                        <div id="more-details">{{filter_company_id(Auth()->User()->roles->toArray()[0]['name']) ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
+                        <div id="more-details">{{Auth()->User()->roles->toArray()[0]['name'] ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
                     </div>
                 </div>
                 <div class="collapse" id="nav-user-link d-none">
