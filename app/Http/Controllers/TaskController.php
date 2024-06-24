@@ -210,8 +210,8 @@ class TaskController extends Controller
         $task['end_date']       = $request->end_date ?? NULL;
         $task_response = $task->save();
 
-        $users = $request->assign_to;
-        if ($users) {
+         $users = array_filter($request->assign_to);
+        if (!empty($users)) {
             $task->users()->sync($users);
         }
 
