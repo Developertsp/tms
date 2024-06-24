@@ -87,7 +87,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="status">Assign To</label>
-                                <select name="assign_to[]" id="assign_to" class="form-control">
+                                <select name="assign_to" id="assign_to" class="form-control">
                                     <option value="" selected>Please select one from blow</option>
                                     @foreach ($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
