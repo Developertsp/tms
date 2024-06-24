@@ -13,7 +13,7 @@ class AttachmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|max:2048',
+            'file' => 'required|max:10240',
         ]);
 
         $task_id = $request->task_id;
