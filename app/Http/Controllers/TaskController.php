@@ -210,7 +210,7 @@ class TaskController extends Controller
         $task['end_date']       = $request->end_date ?? NULL;
         $task_response = $task->save();
 
-         $users = array_filter($request->assign_to);
+        $users = array_filter($request->assign_to);
         if (!empty($users)) {
             $task->users()->sync($users);
         }
@@ -232,27 +232,27 @@ class TaskController extends Controller
             $file_data->save();
         }
 
-        // Notification
-        $notification = new Notification();
+        if (!empty($users)) {
+            // Notification
+            $notification = new Notification();
 
-        $notification['task_id']    = $request->task_id;
-        $notification['title']      = 'Task Updated';
-        $notification['message']    = 'You task is updated to you by ' . Auth::user()->name;
-        $notification['user_id']    = $request->assign_to[0];
-        $notification['created_by'] = Auth::id();
+            $notification['task_id']    = $request->task_id;
+            $notification['title']      = 'Task Updated';
+            $notification['message']    = 'You task is updated to you by ' . Auth::user()->name;
+            $notification['user_id']    = $request->assign_to[0];
+            $notification['created_by'] = Auth::id();
 
-        $notification->save();
+            $notification->save();
 
-        // push notification
-        $msg_post = [
-            'notification_message' => 'Your task is updated to you.',
-            'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
-        ];
-        $user_ids = [$notification['user_id']];
-        $push_notification = new PushNotificationService();
-        $push_notification->send($msg_post, $user_ids);
-
-
+            // push notification
+            $msg_post = [
+                'notification_message' => 'Your task is updated to you.',
+                'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
+            ];
+            $user_ids = [$notification['user_id']];
+            $push_notification = new PushNotificationService();
+            $push_notification->send($msg_post, $user_ids);
+        }
         // Create a log entry
         $log_data = new Log();
         $log_data['user_id']    = Auth::id();
