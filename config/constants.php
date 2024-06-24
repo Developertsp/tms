@@ -9,9 +9,11 @@ return [
     ],
 
     'TASK_STATUS' => [
-         'Assigned'  =>1,
-         'Work Started' =>2,
-         'Closed' =>3,
+         'Assigned'  => 1,
+         'Work Started' => 2,
+         'Closed' => 3,
+         'Completed' => 4,
+         'Invalid' => 5
     ],
 
 

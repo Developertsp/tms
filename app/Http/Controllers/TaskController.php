@@ -40,40 +40,82 @@ class TaskController extends Controller
         $department_id = $user->department_id;
 
         if ($department_id) {
-            $data['tasks'] = Task::whereHas('users', function ($query) use ($department_id) {
-                $query->where('department_id', $department_id);
-            })->where('is_enable', 1)
-                ->with('project', 'department', 'users', 'creator')
-                ->orderBy('id', 'desc')
-                ->get();
+            if($user->scope == 2){
+                $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
+                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            else{
+                $data['tasks'] = Task::whereHas('users', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                    })->where('is_enable', 1)
+                    ->with('project', 'department', 'users', 'creator')
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+            
         } else {
             $data['tasks'] = Task::where('is_enable', 1)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
+            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
-
-        $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
         return view('tasks.list', $data);
     }
 
     public function show($id)
     {
+        $user = Auth::user();
+        $department_id = $user->department_id;
+
         $task_id        = base64_decode($id);
         $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
-        $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        // $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+
+        if($department_id){
+            if($user->scope == 2){
+                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            else{
+                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+        }
+        else{
+            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        }
+
         return view('tasks.show', $data);
     }
 
     public function create()
     {
-        $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $user = Auth::user();
+        $department_id = $user->department_id;
+
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['status']     = config('constants.STATUS_LIST');
         $data['priority']   = config('constants.PRIORITY_LIST');
+
+        if($department_id){
+            if($user->scope == 2){
+                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            else{
+                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+        }
+        else{
+            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        }
 
         return view('tasks.create', $data);
     }
@@ -104,8 +146,11 @@ class TaskController extends Controller
 
         $response = $task->save();
 
-        $users = $request->assign_to;
-        $task->users()->attach($users);
+        // return $request->assign_to;
+        if($request->assign_to){
+            $users = $request->assign_to;
+            $task->users()->attach($users);
+        }
 
         if ($request->hasFile('attachment')) {
             $file       = $request->file('attachment');
@@ -124,25 +169,27 @@ class TaskController extends Controller
             $file_data->save();
         }
 
-        // Notification
-        $notification = new Notification();
+        if($request->assign_to){
+            // Notification
+            $notification = new Notification();
 
-        $notification['task_id']    = $task->id;
-        $notification['title']      = 'New Task Assigned';
-        $notification['message']    = 'A new task is assigned to you by ' . Auth::user()->name;
-        $notification['user_id']    = $request->assign_to[0];
-        $notification['created_by'] = Auth::id();
+            $notification['task_id']    = $task->id;
+            $notification['title']      = 'New Task Assigned';
+            $notification['message']    = 'A new task is assigned to you by ' . Auth::user()->name;
+            $notification['user_id']    = $request->assign_to;
+            $notification['created_by'] = Auth::id();
 
-        $notification->save();
+            $notification->save();
 
-        // push notification
-        $msg_post = [
-            'notification_message' => 'New task is assigned to you.',
-            'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
-        ];
-        $user_ids = [$notification['user_id']];
-        $push_notification = new PushNotificationService();
-        $push_notification->send($msg_post, $user_ids);
+            // push notification
+            $msg_post = [
+                'notification_message' => 'New task is assigned to you.',
+                'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
+            ];
+            $user_ids = [$notification['user_id']];
+            $push_notification = new PushNotificationService();
+            $push_notification->send($msg_post, $user_ids);
+        }
 
         return redirect()->route('tasks.list')->with('success', 'Task assigned successfully');
     }
@@ -253,11 +300,28 @@ class TaskController extends Controller
 
     public function report()
     {
-        $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $user = Auth::user();
+        $department_id = $user->department_id;
+
+        // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        // $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['status']     = config('constants.STATUS_LIST');
         $data['priority']   = config('constants.PRIORITY_LIST');
+
+        if($department_id){
+            if($user->scope == 2){
+                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            else{
+                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+        }
+        else{
+            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        }
 
         return view('tasks.report', $data);
     }

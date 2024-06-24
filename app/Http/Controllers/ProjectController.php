@@ -31,7 +31,17 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
+        $user = Auth::user();
+        $department_id = $user->department_id;
+
+        if($department_id){
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+        }
+        else{
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        }
+
+        // $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
         $data['status'] = config('constants.PROJECT_STATUS_LIST');
         return view('projects.create', $data);
     }
@@ -61,9 +71,19 @@ class ProjectController extends Controller
 
     public function edit($id)
     {
+        $user = Auth::user();
+        $department_id = $user->department_id;
+
+        if($department_id){
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+        }
+        else{
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        }
+
         $data['status'] = config('constants.PROJECT_STATUS_LIST');
         $data['project'] = Project::find($id);
-        $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
+        // $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
         return view('projects.edit', $data);
     }
 

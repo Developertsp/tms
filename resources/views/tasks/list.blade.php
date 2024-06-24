@@ -132,7 +132,7 @@
                                     <span>{{ $user->name }}</span>@if(!$loop->last), @endif
                                     @endforeach
                                 </td>
-                                <td>{{ $task->department->name }}</td>
+                                <td>{{ $task->department->name ?? NULL }}</td>
                                 <td>{{ $task->project->name }}</td>
                                 <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
