@@ -76,9 +76,9 @@
                                 <th># Details</th>
                                 <th>Priority</th>
                                 <th>Status</th>
+                                <th>Assign To</th>
                                 <th>Title</th>
                                 <th>Assigned By</th>
-                                <th>Assign To</th>
                                 <th>Department</th>
                                 <th>Project</th>
                                 <th>Due Date</th>
@@ -125,15 +125,16 @@
                                         {{ $task_status[$task->status] ?? '' }}
                                     </a>
                                 </td>
-                                <td>{{ $task->title }}</td>
-                                <td>{{ $task->creator->name }}</td>
                                 <td>
                                     @foreach ($task->users as $user)
                                     <span>{{ $user->name }}</span>@if(!$loop->last), @endif
                                     @endforeach
                                 </td>
+                                <td>{{ $task->title }}</td>
+                                
                                 <td>{{ $task->department->name ?? NULL }}</td>
                                 <td>{{ $task->project->name }}</td>
+                                <td>{{ $task->creator->name }}</td>
                                 <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
                             </tr>
@@ -167,13 +168,13 @@
         // Filter for users
         $('#userFilter').on('change', function() {
             var selectedValue = $(this).val();
-            table.column(5).search(selectedValue).draw();
+            table.column(3).search(selectedValue).draw();
         });
 
         // Filter for department
         $('#departmentFilter').on('change', function() {
             var selectedValue = $(this).val();
-            table.column(6).search(selectedValue).draw();
+            table.column(5).search(selectedValue).draw();
         });
 
         // Filter for performance
