@@ -6,6 +6,8 @@ return [
         1 => 'Assigned',
         2 => 'Work Started',
         3 => 'Closed',
+        4 => 'Completed',
+        5 => 'Invalid'
     ],
 
     'TASK_STATUS' => [
