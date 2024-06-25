@@ -44,6 +44,11 @@ class Task extends Model
         return $this->hasMany(Log::class);
     }
 
+    public function tracking()
+    {
+        return $this->hasMany(TaskTimeTracking::class);
+    }
+
     // accessor for formatted created_at
     public function getFormattedCreatedAtAttribute()
     {
@@ -63,5 +68,20 @@ class Task extends Model
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function getTotalTimeAttribute()
+    {
+        // $totalMinutes = $this->tracking->sum('time');
+        // $hours = floor($totalMinutes / 60);
+        // $remainingMinutes = $totalMinutes % 60;
+        // return sprintf('%dH %02dM', $hours, $remainingMinutes);
+
+        // 1 day equal to 480 min 8hour duty
+        $totalMinutes = $this->tracking->sum('time');
+        $days = floor($totalMinutes / 480);
+        $hours = floor(($totalMinutes % 480) / 60);
+        $remainingMinutes = $totalMinutes % 60;
+        return sprintf('%dD %02dH %02dM', $days, $hours, $remainingMinutes);
     }
 }
