@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\TaskTimeTracking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectCommentController;
+use App\Http\Controllers\TaskTimeTrackingController;
 use App\Http\Controllers\ProjectAttachmentController;
 
 /*
@@ -72,6 +74,10 @@ Route::post('comments/store', [CommentController::class, 'store'])->name('commen
 
 // Task Attachments
 Route::post('attachments/store', [AttachmentController::class, 'store'])->name('attachments.store');
+
+// Task Time Tracking
+Route::post('tracking/store', [TaskTimeTrackingController::class, 'store'])->name('tracking.store');
+
 
 // Project Routes
 Route::get('projects', [ProjectController::class, 'index'])->name('projects.list');

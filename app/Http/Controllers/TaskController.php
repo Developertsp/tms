@@ -69,7 +69,7 @@ class TaskController extends Controller
         $department_id = $user->department_id;
 
         $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user')->find($task_id);
+        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
         // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
