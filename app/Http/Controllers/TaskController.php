@@ -34,11 +34,10 @@ class TaskController extends Controller
 
     public function index()
     {
-        // $data['tasks'] = Task::where('is_enable', 1)->with('project', 'users', 'creator')->orderBy('id', 'desc')->get();
 
         $user = Auth::user();
         $department_id = $user->department_id;
-
+        $data['department_id'] = $department_id; 
         if ($department_id) {
             if ($user->scope == 2) {
                 $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
