@@ -77,10 +77,10 @@
                                 <th>Priority</th>
                                 <th>Status</th>
                                 <th>Assign To</th>
-                                <th>Title</th>
-                                <th>Assigned By</th>
-                                <th>Department</th>
                                 <th>Project</th>
+                                <th>Title</th>
+                                <th>Department</th>
+                                <th>Assigned By</th>
                                 <th>Due Date</th>
                                 <th>Performance</th>
                             </tr>
@@ -130,10 +130,10 @@
                                     <span>{{ $user->name }}</span>@if(!$loop->last), @endif
                                     @endforeach
                                 </td>
+                                <td>{{ $task->project->name }}</td>
                                 <td>{{ $task->title }}</td>
                                 
                                 <td>{{ $task->department->name ?? NULL }}</td>
-                                <td>{{ $task->project->name }}</td>
                                 <td>{{ $task->creator->name }}</td>
                                 <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
@@ -174,7 +174,7 @@
         // Filter for department
         $('#departmentFilter').on('change', function() {
             var selectedValue = $(this).val();
-            table.column(5).search(selectedValue).draw();
+            table.column(6).search(selectedValue).draw();
         });
 
         // Filter for performance
