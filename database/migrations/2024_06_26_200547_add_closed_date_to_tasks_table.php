@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->date('closed_date')->nullable()->after('end_date');
+            $table->integer('revisions')->default(0)->nullable()->after('closed_date');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->dropColumn('closed_date');
+            $table->dropColumn('revisions');
         });
     }
 };

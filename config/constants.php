@@ -7,7 +7,9 @@ return [
         2 => 'Work Started',
         3 => 'Closed',
         4 => 'Completed',
-        5 => 'Invalid'
+        5 => 'Invalid',
+        6 => 'Under QA',
+        7 => 'Revision',
     ],
 
     'TASK_STATUS' => [
@@ -15,7 +17,9 @@ return [
          'Work Started' => 2,
          'Closed' => 3,
          'Completed' => 4,
-         'Invalid' => 5
+         'Invalid' => 5,
+         'Under QA' => 6,
+         'Revision' => 7
     ],
 
 

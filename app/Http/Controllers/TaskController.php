@@ -213,6 +213,10 @@ class TaskController extends Controller
             $task['closed_date'] = Carbon::now()->format('Y-m-d');
         }
 
+        if($request->status == config('constants.TASK_STATUS')['Revision']){
+            $task['revisions'] = $task->revisions + 1;
+        }
+
         $task_response = $task->save();
 
         $users = array_filter($request->assign_to);

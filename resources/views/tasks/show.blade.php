@@ -110,6 +110,10 @@
             </span>
             <hr>
 
+            <div class="d-flex justify-content-between ">
+                <h5>Revisions:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->revisions }}</span> </h5>
+            </div>
             <div class="d-flex justify-content-between">
                 <h5>Time Tracking:</h5>
                 <h5><span class="badge badge-soft-success float-end btn btn-primary rounded-pill py-1 px-3" data-toggle="modal" data-target="#tracking_modal"> <i class="fa fa-plus"></i></span> </h5>
