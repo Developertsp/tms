@@ -19,6 +19,7 @@
             <div class="card-body table-border-style">
                 <div class="table-responsive">
                     <div class="row">
+                        @if(!$department_id)
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="departmentFilter">Filter by Department:</label>
@@ -30,7 +31,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        @endif
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="userFilter">Filter by User:</label>
@@ -79,7 +80,9 @@
                                 <th>Assign To</th>
                                 <th>Project</th>
                                 <th>Title</th>
+                                @if(!$department_id)
                                 <th>Department</th>
+                                @endif
                                 <th>Assigned By</th>
                                 <th>Due Date</th>
                                 <th>Performance</th>
@@ -132,8 +135,9 @@
                                 </td>
                                 <td>{{ $task->project->name }}</td>
                                 <td>{{ $task->title }}</td>
-                                
+                                @if(!$department_id)
                                 <td>{{ $task->department->name ?? NULL }}</td>
+                                @endif
                                 <td>{{ $task->creator->name }}</td>
                                 <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
