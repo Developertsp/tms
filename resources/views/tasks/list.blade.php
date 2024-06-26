@@ -92,6 +92,7 @@
                             @foreach ($tasks as $task)
                             @php
                             $currentDate = \Carbon\Carbon::now()->startOfDay();
+                            $todayDate = \Carbon\Carbon::now()->format('Y-m-d');
                             $endDate = isset($task->end_date) ? \Carbon\Carbon::parse($task->end_date)->startOfDay() : null;
                             $isDeadlinePassed = $endDate !== null && $endDate->lt($currentDate);
 
@@ -104,15 +105,27 @@
                             $daysLabel = ($daysRemaining >= 0) ? $daysRemaining . ' Remaining' : abs($daysRemaining) . ' Over';
                             }
 
-                            if ($task_status[$task->status] == 'Closed') {
-                            $label = 'Deadline Acheived';
-                            } elseif ($isNotClosed && $isDeadlinePassed) {
-                            $label = 'Deadline Missed';
-                            } elseif ($isNotClosed && !$isDeadlinePassed) {
-                            $label = 'Performance N/D';
+                            // if ($task_status[$task->status] == 'Closed') {
+                            // $label = 'Deadline Acheived';
+                            // } elseif ($isNotClosed && $isDeadlinePassed) {
+                            // $label = 'Deadline Missed';
+                            // } elseif ($isNotClosed && !$isDeadlinePassed) {
+                            // $label = 'Performance N/D';
+                            // }
+
+                            if ($task->closed_date > $task->end_date || ($task->end_date && $todayDate > $task->end_date && ! $task->closed_date)) {
+                                $label = 'Deadline Missed';
+                                $deadlinePassed = false;
+                            } elseif ($task->closed_date && $task->closed_date <= $task->end_date) {
+                                $label = 'Deadline Acheived';
+                                $deadlinePassed = true;
+                            } else {
+                                $label = 'Performance N/D';
+                                $deadlinePassed = true;
                             }
+
                             @endphp
-                            <tr class="{{ $isDeadlinePassed && $isNotClosed ? 'bg-danger' : '' }}">
+                            <tr class="{{ $deadlinePassed ? '' : 'bg-danger' }}">
                                 <td>
                                     <a href="{{ route('tasks.show', base64_encode($task->id)) }}" class="fw-bold">
                                         #{{ $task->id }} <i class="fas fa-eye"></i>

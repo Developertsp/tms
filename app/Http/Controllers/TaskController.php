@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Log;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
-use App\Models\Attachment;
 
+use App\Models\Attachment;
 use App\Models\Department;
+use App\Exports\TasksExport;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Services\PushNotificationService;
 
-use App\Exports\TasksExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\PushNotificationService;
 
 
 class TaskController extends Controller
@@ -207,6 +208,15 @@ class TaskController extends Controller
         $task['updated_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
         $task['end_date']       = $request->end_date ?? NULL;
+
+        if($request->status == config('constants.TASK_STATUS')['Closed']){
+            $task['closed_date'] = Carbon::now()->format('Y-m-d');
+        }
+
+        if($request->status == config('constants.TASK_STATUS')['Revision']){
+            $task['revisions'] = $task->revisions + 1;
+        }
+
         $task_response = $task->save();
 
         $users = array_filter($request->assign_to);

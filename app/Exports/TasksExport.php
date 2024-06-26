@@ -26,7 +26,7 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
      */
     public function collection()
     {
-        return Task::with('project', 'department', 'users', 'creator')->whereIn('id', $this->tasks)->get();
+        return Task::with('project', 'department', 'users', 'creator', 'tracking')->whereIn('id', $this->tasks)->get();
     }
 
     public function headings(): array
@@ -39,6 +39,8 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
             'Status',
             'Start Date',
             'End Date',
+            'Time Spent',
+            'Revisions',
             'Assigned To',
             'Deparment',
         ];
@@ -70,6 +72,8 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
             $status,
             $task->start_date,
             $task->end_date,
+            $task->total_time,
+            $task->revisions,
         ];
 
         if ($this->hasUsers($task)) {

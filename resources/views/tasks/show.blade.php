@@ -95,6 +95,10 @@
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> </h5>
             </div>
             <div class="d-flex justify-content-between ">
+                <h5>Task Closed:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->closed_date ? $task->formatted_closed_date : '' }}</span> </h5>
+            </div>
+            <div class="d-flex justify-content-between ">
                 <h5>Assigned By:</h5>
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->creator->name }}</span> </h5>
             </div>
@@ -106,6 +110,10 @@
             </span>
             <hr>
 
+            <div class="d-flex justify-content-between ">
+                <h5>Revisions:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->revisions }}</span> </h5>
+            </div>
             <div class="d-flex justify-content-between">
                 <h5>Time Tracking:</h5>
                 <h5><span class="badge badge-soft-success float-end btn btn-primary rounded-pill py-1 px-3" data-toggle="modal" data-target="#tracking_modal"> <i class="fa fa-plus"></i></span> </h5>
