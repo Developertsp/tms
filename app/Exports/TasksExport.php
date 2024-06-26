@@ -40,6 +40,7 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
             'Start Date',
             'End Date',
             'Time Spent',
+            'Revisions',
             'Assigned To',
             'Deparment',
         ];
@@ -72,6 +73,7 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
             $task->start_date,
             $task->end_date,
             $task->total_time,
+            $task->revisions,
         ];
 
         if ($this->hasUsers($task)) {
