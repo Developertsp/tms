@@ -34,16 +34,16 @@ class TaskTimeTracking extends Model
     }
 
     public function getFormattedTimeAttribute() {
-        // $minutes = $this->attributes['time'];
-        // $hours = floor($minutes / 60);
-        // $remainingMinutes = $minutes % 60;
-        // return sprintf('%dH %02dM', $hours, $remainingMinutes);
+        $minutes = $this->attributes['time'];
+        $hours = floor($minutes / 60);
+        $remainingMinutes = $minutes % 60;
+        return sprintf('%dH %02dM', $hours, $remainingMinutes);
 
         // 1 day equal to 480 min 8hour duty
-        $minutes = $this->attributes['time'];
-        $days = floor($minutes / 480); // 1440 minutes in a day
-        $hours = floor(($minutes % 480) / 60);
-        $remainingMinutes = $minutes % 60;
-        return sprintf('%dD %02dH %02dM', $days, $hours, $remainingMinutes);
+        // $minutes = $this->attributes['time'];
+        // $days = floor($minutes / 480);
+        // $hours = floor(($minutes % 480) / 60);
+        // $remainingMinutes = $minutes % 60;
+        // return sprintf('%dD %02dH %02dM', $days, $hours, $remainingMinutes);
     }
 }
