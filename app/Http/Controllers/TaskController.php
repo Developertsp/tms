@@ -60,6 +60,8 @@ class TaskController extends Controller
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
 
+        $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
+
         return view('tasks.list', $data);
     }
 
