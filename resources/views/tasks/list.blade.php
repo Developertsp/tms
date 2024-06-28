@@ -20,19 +20,19 @@
                 <div class="table-responsive">
                     <div class="row">
                         @if(!$department_id)
-                        <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group fill">
-                                <label for="departmentFilter">Filter by Department:</label>
-                                <select id="departmentFilter" class="form-control">
-                                    <option value="">Select Department</option>
-                                    @foreach ($departments as $department)
-                                    <option value="{{ $department->name }}">{{ $department->name }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-lg-2 col-md-6 col-sm-12">
+                                <div class="form-group fill">
+                                    <label for="departmentFilter">Filter by Department:</label>
+                                    <select id="departmentFilter" class="form-control">
+                                        <option value="">Select Department</option>
+                                        @foreach ($departments as $department)
+                                        <option value="{{ $department->name }}">{{ $department->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
                         @endif
-                        <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="col-lg-2 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="userFilter">Filter by User:</label>
                                 <select id="userFilter" class="form-control">
@@ -44,7 +44,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="col-lg-2 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="statusFilter">Filter by Status:</label>
                                 <select id="statusFilter" class="form-control">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="col-lg-2 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="perfromanceFilter">Filter by Performance:</label>
                                 <select id="perfromanceFilter" class="form-control">
@@ -69,6 +69,17 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-2 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="projectFilter">Filter by Projects:</label>
+                                <select id="projectFilter" class="form-control">
+                                    <option value="">Select Project</option>
+                                    @foreach ($projects as $project)
+                                    <option value="{{ $project->name }}">{{ $project->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <table class="table" id="tasksTable">
@@ -198,6 +209,12 @@
         $('#perfromanceFilter').on('change', function() {
             var selectedValue = $(this).val();
             table.column(9).search(selectedValue).draw();
+        });
+
+        // Filter for projects
+        $('#projectFilter').on('change', function() {
+            var selectedValue = $(this).val();
+            table.column(4).search(selectedValue).draw();
         });
 
 

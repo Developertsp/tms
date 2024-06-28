@@ -103,6 +103,8 @@ Route::get('notifications/read/{id}', [NotificationController::class, 'read'])->
 Route::post('notifications/read_all/', [NotificationController::class, 'read_all'])->name('notifications.read_all');
 Route::get('notifications/list', [NotificationController::class, 'list'])->name('notifications.list');
 
+// dashboard filter
+Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {

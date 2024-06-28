@@ -9,3 +9,6 @@
 
 <!-- Dropzone -->
 <link rel="stylesheet" href="{{ asset('assets/theme/libs/dropzone/min/dropzone.min.css')}}" rel="stylesheet" type="text/css">
+
+<!-- Daterange -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
