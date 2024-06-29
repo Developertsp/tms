@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectCommentController;
 use App\Http\Controllers\TaskTimeTrackingController;
 use App\Http\Controllers\ProjectAttachmentController;
+use App\Http\Controllers\JdTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +106,12 @@ Route::get('notifications/list', [NotificationController::class, 'list'])->name(
 
 // dashboard filter
 Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
+
+// Project Routes
+Route::get('jd', [JdTaskController::class, 'index'])->name('jd.list');
+Route::get('jd/create', [JdTaskController::class, 'create'])->name('jd.create');
+Route::post('jd/store', [JdTaskController::class, 'store'])->name('jd.store');
+
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {

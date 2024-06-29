@@ -69,6 +69,18 @@
                 </li>
                 @endcan
 
+                @can('view-jd-tasks')
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fa fa-folder"></i></span><span class="pcoded-mtext">JD Tasks</span></a>
+                        <ul class="pcoded-submenu">
+                            @can('create-jd-tasks')
+                                <li><a href="{{ route('jd.create') }}">Add New</a></li>
+                            @endcan
+                            <li><a href="{{ route('jd.list') }}">List</a></li>
+                        </ul>
+                    </li>
+                @endcan
+
                 @can('view-departments')
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fa fa-building"></i></span><span class="pcoded-mtext">Departments</span></a>

@@ -54,4 +54,10 @@ return [
         2 => 'Pause',
         3 => 'Closed',
     ],
+
+    'JD_TASK_FREQUENCY' => [
+        1 => 'Daily',
+        2 => 'Weekly',
+        3 => 'Monthly',
+    ],
 ];
