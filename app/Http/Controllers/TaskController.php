@@ -338,6 +338,16 @@ class TaskController extends Controller
             ->with('project', 'department', 'users', 'creator')
             ->orderBy('id', 'desc');
 
+        if(Auth::user()->scope == 2){
+            $query->where('department_id', Auth::user()->department_id);
+        }
+
+        if(Auth::user()->scope == 3){
+            $query->whereHas('users', function ($query) {
+                $query->where('user_id', Auth::user()->id);
+            });
+        }
+
         // Apply filters based on request parameters
         if ($request->filled('department_id')) {
             $query->where('department_id', $request->department_id);
@@ -376,17 +386,24 @@ class TaskController extends Controller
 
         if ($request->filled('performance')) {
             $performance = $request->performance;
-
+            $todayDate = Carbon::today()->format('Y-m-d');
+            
             if ($performance === 'D_Missed') {
-                $query->where(function ($query) {
-                    $query->where('status', '<>', 3)
-                        ->where('end_date', '<', now()->format('Y-m-d'));
+                $query->where(function ($query) use ($todayDate) {
+                    $query->where(function ($query) {
+                        $query->whereColumn('closed_date', '>', 'end_date');
+                    })->orWhere(function ($query) use ($todayDate) {
+                        $query->whereNotNull('end_date')
+                            ->where('end_date', '<', $todayDate)
+                            ->whereNull('closed_date');
+                    });
                 });
-            } elseif ($performance === 'D_Achieved') {
-                $query->where(function ($query) {
-                    $query->where('status', 3)
-                        ->whereDate('end_date', '>=', now()->format('Y-m-d'));
-                });
+
+            }
+            elseif ($performance === 'D_Achieved') {
+                $query->whereNotNull('end_date')
+                    ->whereColumn('closed_date', '<=', 'end_Date')
+                    ->where('status', 3);
             }
         }
 

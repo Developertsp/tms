@@ -4,15 +4,22 @@ namespace App\Exports;
 
 use App\Models\Task;
 use Illuminate\Support\Facades\Config;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithDefaultStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style;
+use PhpOffice\PhpSpreadsheet\Style\Style as DefaultStyles;
 
-class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitle
+class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitle, ShouldAutoSize, WithColumnWidths, WithStyles, WithDefaultStyles
 {
     protected $tasks;
 
@@ -46,6 +53,63 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
         ];
 
         return $headings;
+    }
+
+    public function columnWidths(): array
+    {
+        return [
+            'B' => 20,
+            'C' => 50,
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        // return [
+        //     '1' => [
+        //         'font' => [
+        //             'bold' => true,
+        //             'color' => ['argb' => 'FFFFFF']
+        //         ],
+        //         'fill' => [
+        //             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+        //             'color' => ['argb' => '00B050'] // Red color (change to your desired color)
+        //         ]
+        //     ]
+        // ];
+
+        $sheet->getStyle('1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFFFF'],
+                'size' => 14
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'color' => ['argb' => '00B050']
+            ]
+        ]);
+
+        $sheet->getStyle('B1:B'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
+        $sheet->getStyle('C1:C'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
+        
+        $sheet->setAutoFilter("A1:{$sheet->getHighestColumn()}1");
+
+        $sheet->setSelectedCell('A1');
+    }
+
+    public function defaultStyles(DefaultStyles $defaultStyle)
+    {
+        return [
+            'font' => [
+                'name' => 'Calibri',
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => Style\Alignment::VERTICAL_CENTER,
+            ],
+        ];
     }
 
     public function map($task): array
