@@ -69,6 +69,7 @@ Route::get('tasks/show/{id}', [TaskController::class, 'show'])->name('tasks.show
 Route::post('tasks/update', [TaskController::class, 'update'])->name('tasks.update');
 Route::get('tasks/report', [TaskController::class, 'report'])->name('tasks.report');
 Route::post('tasks/export', [TaskController::class, 'export'])->name('tasks.export');
+Route::post('tasks/update_deadline', [TaskController::class, 'update_task_deadline'])->name('tasks.update.deadline');
 
 // Task Comments
 Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');

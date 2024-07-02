@@ -92,7 +92,12 @@
             </div>
             <div class="d-flex justify-content-between ">
                 <h5>Task End:</h5>
-                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> </h5>
+                <h5>
+                    <span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> 
+                    @if(in_array(Auth::user()->scope, [1,2]))
+                        <i class="fa fa-edit float-right mx-2 mt-1" style="cursor:pointer;" data-toggle="modal" data-target="#deadline_modal"></i> 
+                    @endif
+                </h5>
             </div>
             <div class="d-flex justify-content-between ">
                 <h5>Task Closed:</h5>
@@ -301,18 +306,6 @@
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-sm-12">
-                            <div class="form-group fill">
-                                <label for="end_date">End Date</label>
-                                <input type="date"  class="form-control" name="end_date" value="{{ old('end_date',$task->end_date ?? '')}}" id="end_date">
-                            </div>
-                            @if ($errors->has('end_date'))
-                            <span class="help-block text-danger">
-                                {{ $errors->first('end_date') }}
-                            </span>
-                            @endif
-                        </div>
-
-                        <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group">
                                 <label for="description">Task Attachment Url</label>
                                 <div class="custom-file">
@@ -426,6 +419,54 @@
                             @endif
                         </div>
 
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                    <button type="submit" for="task_tracking_form" class="btn  btn-primary rounded py-1">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Change End Date -->
+<div class="modal fade" id="deadline_modal" tabindex="-1" role="dialog" aria-labelledby="deadline_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deadline_modalLabel">Edit End Date</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="deadline_form" action="{{ route('tasks.update.deadline') }}" method="post">
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="end_date">Date</label>
+                                <input type="date" class="form-control" name="end_date" id="end_date" value="{{ old('end_date',$task->end_date ?? '')}}" required>
+                            </div>
+                            @if ($errors->has('end_date'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('end_date') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group fill">
+                                <label for="reason">Reason</label>
+                                <input type="text" class="form-control" name="reason" id="reason" @if($task->end_date) required @endif>
+                            </div>
+                            @if ($errors->has('reason'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('reason') }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

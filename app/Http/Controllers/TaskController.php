@@ -412,4 +412,27 @@ class TaskController extends Controller
         // Download the Excel file using TasksExport
         return Excel::download(new TasksExport($tasks), 'tasks.xlsx');
     }
+
+    public function update_task_deadline(Request $request)
+    {
+        $task = Task::find($request->task_id);
+
+        if($task->end_date){
+            $this->validate($request, [
+                'end_date' => 'required',
+                'reason' => 'required',
+            ]);
+        }
+        else{
+            $this->validate($request, [
+                'end_date' => 'required',
+            ]);
+        }
+
+        $task['end_date']  = $request->end_date ?? NULL;
+        $task['deadline_reason']  = $request->reason ?? NULL;
+        $task_response = $task->save();
+
+        return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
+    }
 }
