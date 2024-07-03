@@ -157,7 +157,7 @@
                                     <span>{{ $user->name }}</span>@if(!$loop->last), @endif
                                     @endforeach
                                 </td>
-                                <td>{{ $task->project->name }}</td>
+                                <td>{{ $task->project->name ?? null }}</td>
                                 <td>{{ $task->title }}</td>
                                 @if(!$department_id)
                                 <td>{{ $task->department->name ?? NULL }}</td>

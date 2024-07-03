@@ -71,7 +71,7 @@
 
             <div class="d-flex justify-content-between mt-4">
                 <h5>Pro. Name:</h5>
-                <h5><span class="badge badge-soft-success float-end"> {{ $task->project->name }} </span></h5>
+                <h5><span class="badge badge-soft-success float-end"> {{ $task->project->name ?? null }} </span></h5>
             </div>
 
             <div class="d-flex justify-content-between">

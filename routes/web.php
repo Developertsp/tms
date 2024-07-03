@@ -47,6 +47,7 @@ Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 Route::delete('users/show/{id}', [UserController::class, 'show'])->name('users.show');
+Route::get('users/users_by_role', [UserController::class, 'users_by_role'])->name('users.by.role');
 
 // User Profile Routes
 Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');
@@ -108,11 +109,16 @@ Route::get('notifications/list', [NotificationController::class, 'list'])->name(
 // dashboard filter
 Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
-// Project Routes
+// JD Task Routes
 Route::get('jd', [JdTaskController::class, 'index'])->name('jd.list');
 Route::get('jd/create', [JdTaskController::class, 'create'])->name('jd.create');
+Route::get('jd/edit/{id}', [JdTaskController::class, 'edit'])->name('jd.edit');
+Route::post('jd/update', [JdTaskController::class, 'update'])->name('jd.update');
 Route::post('jd/store', [JdTaskController::class, 'store'])->name('jd.store');
+Route::delete('jd/destroy/{id}', [JdTaskController::class, 'destroy'])->name('jd.destroy');
 
+// Cronjob
+Route::get('jd/cronJob', [JdTaskController::class, 'cronJob']);
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {

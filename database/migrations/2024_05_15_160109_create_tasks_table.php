@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->integer('project_id');
+            $table->integer('project_id')->nullable();
             $table->integer('department_id')->nullable();
             $table->tinyInteger('priority');
             $table->tinyInteger('status')->default(1);
