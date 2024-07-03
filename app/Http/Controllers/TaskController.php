@@ -305,6 +305,14 @@ class TaskController extends Controller
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
     }
 
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete($task);
+
+        return redirect()->route('tasks.list')->with('success', 'Data deleted successfully!');
+    }
+
     public function report()
     {
         $user = Auth::user();

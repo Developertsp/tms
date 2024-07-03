@@ -71,6 +71,7 @@ Route::post('tasks/update', [TaskController::class, 'update'])->name('tasks.upda
 Route::get('tasks/report', [TaskController::class, 'report'])->name('tasks.report');
 Route::post('tasks/export', [TaskController::class, 'export'])->name('tasks.export');
 Route::post('tasks/update_deadline', [TaskController::class, 'update_task_deadline'])->name('tasks.update.deadline');
+Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
 // Task Comments
 Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');

@@ -97,6 +97,9 @@
                                 <th>Assigned By</th>
                                 <th>Due Date</th>
                                 <th>Performance</th>
+                                @can('delete-tasks')
+                                    <th>Action</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -165,6 +168,16 @@
                                 <td>{{ $task->creator->name }}</td>
                                 <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
+
+                                @can('delete-tasks')
+                                    <td>
+                                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4 py-1" style="border: 2px solid white;" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                        </form>
+                                    </td>
+                                @endcan
                             </tr>
                             @endforeach
                         </tbody>
