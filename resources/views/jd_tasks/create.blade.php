@@ -57,6 +57,20 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="user" class="col-sm-3 col-form-label">User</label>
+                            <div class="col-sm-9">
+                                <select name="user" id="user" class="form-control users_list" required>
+                                    <option value="" selected>Select User</option>
+                                </select>
+                            </div>
+                            @if ($errors->has('role'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('role') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="form-group row">
                             <label for="frequency" class="col-sm-3 col-form-label">Frequency</label>
                             <div class="col-sm-9">
                                 <select name="frequency" id="frequency" class="form-control">
@@ -82,4 +96,36 @@
         </div>
     </div>
 
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function (){
+            $('#role').on('change', function(){
+                var roleId = $('#role').val();
+                
+                $.ajax({
+                    url: '{{ route("users.by.role") }}',
+                    type: 'GET',
+                    data: {
+                        role_id: roleId
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        var usersSelect = $('#user');
+                        usersSelect.empty();
+                        usersSelect.append('<option value="" selected>Select User</option>'); // Add the default option
+                        
+                        $.each(response.users, function(key, value) {
+                            usersSelect.append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
