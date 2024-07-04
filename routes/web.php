@@ -119,7 +119,9 @@ Route::post('jd/store', [JdTaskController::class, 'store'])->name('jd.store');
 Route::delete('jd/destroy/{id}', [JdTaskController::class, 'destroy'])->name('jd.destroy');
 
 // Cronjob
-Route::get('jd/cronJob', [JdTaskController::class, 'cronJob']);
+Route::get('jd/cronJobDaily', [JdTaskController::class, 'cronJobDaily']);
+Route::get('jd/cronJobWeekly', [JdTaskController::class, 'cronJobWeekly']);
+Route::get('jd/cronJobMonthly', [JdTaskController::class, 'cronJobMonthly']);
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {
