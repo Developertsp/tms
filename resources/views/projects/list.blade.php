@@ -28,10 +28,22 @@
                         </thead>
                         <tbody>
                             @foreach ($projects as $project)
+                            @php
+                                $projectStatus = $project->status ?? '';
+
+                                if ($projectStatus && config('constants.PROJECT_STATUS_LIST')[$projectStatus] == 'Running') {
+                                    $btnClass = 'btn-primary';
+                                } elseif ($projectStatus && config('constants.STATUS_LIST')[$projectStatus] == 'Closed') {
+                                    $btnClass = 'btn-success';
+                                } else {
+                                    $btnClass = 'btn-secondary';
+                                }
+                            @endphp
                             <tr>
                                 <td>{{ $project->name }}</td>
                                 <td>
-                                    <a href="{{ route('projects.show', base64_encode($project->id)) }}" class="btn {{ (config('constants.PROJECT_STATUS_LIST')[$project->status] == 'Running') ? 'btn-primary' : ((config('constants.STATUS_LIST')[$project->status] == 'Closed') ? 'btn-success' : 'btn-secondary' ) }}  rounded-pill py-0">{{ config('constants.STATUS_LIST')[$project->status] ?? '' }}</a>
+                                    
+                                    <a href="{{ route('projects.show', base64_encode($project->id)) }}" class="btn {{ $btnClass }}  rounded-pill py-0">{{ config('constants.STATUS_LIST')[$project->status] ?? '' }}</a>
                                 </td>
                                 @if (system_role())
                                 <td>{{ $project->company->name }}</td>

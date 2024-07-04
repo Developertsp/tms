@@ -44,6 +44,11 @@ class PermissionSeeder extends Seeder
             'update-departments',
             'delete-departments',
 
+            'view-jd-tasks',
+            'create-jd-tasks',
+            'update-jd-tasks',
+            'delete-jd-tasks',
+
         ];
 
         foreach ($permissions as $permission) {

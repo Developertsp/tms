@@ -95,6 +95,10 @@
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> </h5>
             </div>
             <div class="d-flex justify-content-between ">
+                <h5>Task Closed:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->closed_date ? $task->formatted_closed_date : '' }}</span> </h5>
+            </div>
+            <div class="d-flex justify-content-between ">
                 <h5>Assigned By:</h5>
                 <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->creator->name }}</span> </h5>
             </div>
@@ -104,6 +108,32 @@
                 <b>{{++$ind}}. </b><span>{{ $user->name }}</span>@if(!$loop->last), @endif
                 @endforeach
             </span>
+            <hr>
+
+            <div class="d-flex justify-content-between ">
+                <h5>Revisions:</h5>
+                <h5><span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->revisions }}</span> </h5>
+            </div>
+            <div class="d-flex justify-content-between">
+                <h5>Time Tracking:</h5>
+                <h5><span class="badge badge-soft-success float-end btn btn-primary rounded-pill py-1 px-3" data-toggle="modal" data-target="#tracking_modal"> <i class="fa fa-plus"></i></span> </h5>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-between mb-4">
+                <h5>Total Time:</h5>
+                <h5>{{$task->total_time}}</h5>
+            </div>
+            
+            @foreach ($task->tracking as $tracking)
+                <div class="mb-2" style="border-bottom: 1px dotted #000">
+                    <h6> {{ $tracking->summary }} </h6>
+                    <div class="d-flex justify-content-between ">
+                        <h6>{{$tracking->user->name}}</h6>
+                        <h6><span> {{ $tracking->formatted_date }}</span> <span class="ml-3">{{ $tracking->formatted_time }}</span> </h5>
+                    </div>
+                </div>
+            @endforeach
 
         </div>
     </div>
@@ -158,6 +188,7 @@
     </div>
 </div>
 <!-- /.modal -->
+
 <!-- Modal for details Change -->
 <div class="modal fade" id="details_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
@@ -260,7 +291,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="start_date">Start Date</label>
-                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="start_date" value="{{ old('start_date',$task->start_date ?? '')}}" id="start_date">
+                                <input type="date"  class="form-control" name="start_date" value="{{ old('start_date',$task->start_date ?? '')}}" id="start_date">
                             </div>
                             @if ($errors->has('start_date'))
                             <span class="help-block text-danger">
@@ -272,7 +303,7 @@
                         <div class="col-lg-3 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="end_date">End Date</label>
-                                <input type="date" min="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control" name="end_date" value="{{ old('end_date',$task->end_date ?? '')}}" id="end_date">
+                                <input type="date"  class="form-control" name="end_date" value="{{ old('end_date',$task->end_date ?? '')}}" id="end_date">
                             </div>
                             @if ($errors->has('end_date'))
                             <span class="help-block text-danger">
@@ -344,6 +375,68 @@
     </div>
 </div>
 
+<!-- Modal for time tracking -->
+<div class="modal fade" id="tracking_modal" tabindex="-1" role="dialog" aria-labelledby="tracking_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tracking_modalLabel">Time Tracking</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="task_tracking_form" action="{{ route('tracking.store') }}" method="post">
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="date">Date</label>
+                                <input type="date" class="form-control" name="date" id="date" required>
+                            </div>
+                            @if ($errors->has('date'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('date') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group fill">
+                                <label for="summary">Summary</label>
+                                <input type="text" class="form-control" name="summary" id="summary" required>
+                            </div>
+                            @if ($errors->has('summary'))
+                                <span class="help-block text-danger">
+                                    {{ $errors->first('summary') }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group fill">
+                                <label for="time">Time Spent (in minutes)</label>
+                                <input type="text" class="form-control" name="time" id="time" required>
+                                <span id="result">0 hour(s) and 0 minute(s)</span>
+                            </div>
+                            @if ($errors->has('time'))
+                            <span class="help-block text-danger">
+                                {{ $errors->first('time') }}
+                            </span>
+                            @endif
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn  btn-secondary rounded py-1" data-dismiss="modal">Close</button>
+                    <button type="submit" for="task_tracking_form" class="btn  btn-primary rounded py-1">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -381,5 +474,14 @@
             });
         }
     };
+
+    $('#time').on('input', function() {
+        var totalMinutes = $(this).val();
+
+        var hours = Math.floor(totalMinutes / 60);
+        var minutes = totalMinutes % 60;
+
+        $('#result').text(hours + ' hour(s) and ' + minutes + ' minute(s)');
+    });
 </script>
 @endsection

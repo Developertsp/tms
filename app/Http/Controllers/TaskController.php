@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Log;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
-use App\Models\Attachment;
 
+use App\Models\Attachment;
 use App\Models\Department;
+use App\Exports\TasksExport;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Services\PushNotificationService;
 
-use App\Exports\TasksExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\PushNotificationService;
 
 
 class TaskController extends Controller
@@ -34,20 +35,18 @@ class TaskController extends Controller
 
     public function index()
     {
-        // $data['tasks'] = Task::where('is_enable', 1)->with('project', 'users', 'creator')->orderBy('id', 'desc')->get();
 
         $user = Auth::user();
         $department_id = $user->department_id;
-
+        $data['department_id'] = $department_id; 
         if ($department_id) {
-            if($user->scope == 2){
+            if ($user->scope == 2) {
                 $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
                 $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            }
-            else{
+            } else {
                 $data['tasks'] = Task::whereHas('users', function ($query) use ($user) {
                     $query->where('user_id', $user->id);
-                    })->where('is_enable', 1)
+                })->where('is_enable', 1)
                     ->with('project', 'department', 'users', 'creator')
                     ->orderBy('id', 'desc')
                     ->get();
@@ -55,12 +54,13 @@ class TaskController extends Controller
                 $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
             }
             $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-            
         } else {
             $data['tasks'] = Task::where('is_enable', 1)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
             $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
+
+        $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
         return view('tasks.list', $data);
     }
@@ -71,22 +71,20 @@ class TaskController extends Controller
         $department_id = $user->department_id;
 
         $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user')->find($task_id);
+        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
         // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
         // $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
-        if($department_id){
-            if($user->scope == 2){
+        if ($department_id) {
+            if ($user->scope == 2) {
                 $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            }
-            else{
+            } else {
                 $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
             }
             $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        }
-        else{
+        } else {
             $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
@@ -103,16 +101,14 @@ class TaskController extends Controller
         $data['status']     = config('constants.STATUS_LIST');
         $data['priority']   = config('constants.PRIORITY_LIST');
 
-        if($department_id){
-            if($user->scope == 2){
+        if ($department_id) {
+            if ($user->scope == 2) {
                 $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            }
-            else{
+            } else {
                 $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
             }
             $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        }
-        else{
+        } else {
             $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
@@ -147,7 +143,7 @@ class TaskController extends Controller
         $response = $task->save();
 
         // return $request->assign_to;
-        if($request->assign_to){
+        if ($request->assign_to) {
             $users = $request->assign_to;
             $task->users()->attach($users);
         }
@@ -169,7 +165,7 @@ class TaskController extends Controller
             $file_data->save();
         }
 
-        if($request->assign_to){
+        if ($request->assign_to) {
             // Notification
             $notification = new Notification();
 
@@ -205,7 +201,7 @@ class TaskController extends Controller
         $task = Task::find($request->task_id);
         $old_status = $task->status;
 
-        $task['department_id']  = $request->department_id;
+        $task['department_id']  = $request->department_id ?? Null;
         $task['project_id']     = $request->project_id;
         $task['priority']       = $request->priority;
         $task['status']         = $request->status;
@@ -214,10 +210,21 @@ class TaskController extends Controller
         $task['updated_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
         $task['end_date']       = $request->end_date ?? NULL;
+
+        if($request->status == config('constants.TASK_STATUS')['Closed']){
+            $task['closed_date'] = Carbon::now()->format('Y-m-d');
+        }
+
+        if($request->status == config('constants.TASK_STATUS')['Revision']){
+            $task['revisions'] = $task->revisions + 1;
+        }
+
         $task_response = $task->save();
 
-        $users = $request->assign_to;
-        $task->users()->sync($users);
+        $users = array_filter($request->assign_to);
+        if (!empty($users)) {
+            $task->users()->sync($users);
+        }
 
         if ($request->hasFile('attachment')) {
             $file       = $request->file('attachment');
@@ -236,27 +243,27 @@ class TaskController extends Controller
             $file_data->save();
         }
 
-        // Notification
-        $notification = new Notification();
+        if (!empty($users)) {
+            // Notification
+            $notification = new Notification();
 
-        $notification['task_id']    = $request->task_id;
-        $notification['title']      = 'Task Updated';
-        $notification['message']    = 'You task is updated to you by ' . Auth::user()->name;
-        $notification['user_id']    = $request->assign_to[0];
-        $notification['created_by'] = Auth::id();
+            $notification['task_id']    = $request->task_id;
+            $notification['title']      = 'Task Updated';
+            $notification['message']    = 'You task is updated to you by ' . Auth::user()->name;
+            $notification['user_id']    = $request->assign_to[0];
+            $notification['created_by'] = Auth::id();
 
-        $notification->save();
+            $notification->save();
 
-        // push notification
-        $msg_post = [
-            'notification_message' => 'Your task is updated to you.',
-            'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
-        ];
-        $user_ids = [$notification['user_id']];
-        $push_notification = new PushNotificationService();
-        $push_notification->send($msg_post, $user_ids);
-
-
+            // push notification
+            $msg_post = [
+                'notification_message' => 'Your task is updated to you.',
+                'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
+            ];
+            $user_ids = [$notification['user_id']];
+            $push_notification = new PushNotificationService();
+            $push_notification->send($msg_post, $user_ids);
+        }
         // Create a log entry
         $log_data = new Log();
         $log_data['user_id']    = Auth::id();
@@ -309,16 +316,14 @@ class TaskController extends Controller
         $data['status']     = config('constants.STATUS_LIST');
         $data['priority']   = config('constants.PRIORITY_LIST');
 
-        if($department_id){
-            if($user->scope == 2){
+        if ($department_id) {
+            if ($user->scope == 2) {
                 $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            }
-            else{
+            } else {
                 $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
             }
             $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        }
-        else{
+        } else {
             $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
@@ -333,6 +338,16 @@ class TaskController extends Controller
             ->with('project', 'department', 'users', 'creator')
             ->orderBy('id', 'desc');
 
+        if(Auth::user()->scope == 2){
+            $query->where('department_id', Auth::user()->department_id);
+        }
+
+        if(Auth::user()->scope == 3){
+            $query->whereHas('users', function ($query) {
+                $query->where('user_id', Auth::user()->id);
+            });
+        }
+
         // Apply filters based on request parameters
         if ($request->filled('department_id')) {
             $query->where('department_id', $request->department_id);
@@ -343,7 +358,7 @@ class TaskController extends Controller
         }
 
         if ($request->filled('assign_to')) {
-            $assignTo = array_filter($request->assign_to); 
+            $assignTo = array_filter($request->assign_to);
             if (!empty($assignTo)) {
                 $query->whereHas('users', function ($query) use ($assignTo) {
                     $query->whereIn('user_id', $assignTo);
@@ -371,17 +386,24 @@ class TaskController extends Controller
 
         if ($request->filled('performance')) {
             $performance = $request->performance;
-
+            $todayDate = Carbon::today()->format('Y-m-d');
+            
             if ($performance === 'D_Missed') {
-                $query->where(function ($query) {
-                    $query->where('status', '<>', 3)
-                        ->where('end_date', '<', now()->format('Y-m-d'));
+                $query->where(function ($query) use ($todayDate) {
+                    $query->where(function ($query) {
+                        $query->whereColumn('closed_date', '>', 'end_date');
+                    })->orWhere(function ($query) use ($todayDate) {
+                        $query->whereNotNull('end_date')
+                            ->where('end_date', '<', $todayDate)
+                            ->whereNull('closed_date');
+                    });
                 });
-            } elseif ($performance === 'D_Achieved') {
-                $query->where(function ($query) {
-                    $query->where('status', 3)
-                        ->whereDate('end_date', '>=', now()->format('Y-m-d'));
-                });
+
+            }
+            elseif ($performance === 'D_Achieved') {
+                $query->whereNotNull('end_date')
+                    ->whereColumn('closed_date', '<=', 'end_Date')
+                    ->where('status', 3);
             }
         }
 

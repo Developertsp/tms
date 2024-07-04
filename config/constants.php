@@ -6,6 +6,10 @@ return [
         1 => 'Assigned',
         2 => 'Work Started',
         3 => 'Closed',
+        4 => 'Completed',
+        5 => 'Invalid',
+        6 => 'Under QA',
+        7 => 'Revision',
     ],
 
     'TASK_STATUS' => [
@@ -13,7 +17,9 @@ return [
          'Work Started' => 2,
          'Closed' => 3,
          'Completed' => 4,
-         'Invalid' => 5
+         'Invalid' => 5,
+         'Under QA' => 6,
+         'Revision' => 7
     ],
 
 
@@ -47,5 +53,11 @@ return [
         1 => 'Running',
         2 => 'Pause',
         3 => 'Closed',
+    ],
+
+    'JD_TASK_FREQUENCY' => [
+        1 => 'Daily',
+        2 => 'Weekly',
+        3 => 'Monthly',
     ],
 ];

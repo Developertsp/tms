@@ -6,7 +6,7 @@
                 <div class="main-menu-header">
                     <img class="img-radius" src="{{ asset('storage/profile_pics/'.Auth()->User()->profile_pic) }}" alt="Profile">
                     <div class="user-details">
-                        <div id="more-details">{{Auth()->User()->roles->toArray()[0]['name'] ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
+                        <div id="more-details">{{filter_company_id(Auth()->User()->roles->toArray()[0]['name']) ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
                     </div>
                 </div>
                 <div class="collapse" id="nav-user-link d-none">
@@ -67,6 +67,18 @@
                         <li><a href="{{ route('companies.list') }}">List</a></li>
                     </ul>
                 </li>
+                @endcan
+
+                @can('view-jd-tasks')
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fa fa-folder"></i></span><span class="pcoded-mtext">JD Tasks</span></a>
+                        <ul class="pcoded-submenu">
+                            @can('create-jd-tasks')
+                                <li><a href="{{ route('jd.create') }}">Add New</a></li>
+                            @endcan
+                            <li><a href="{{ route('jd.list') }}">List</a></li>
+                        </ul>
+                    </li>
                 @endcan
 
                 @can('view-departments')
