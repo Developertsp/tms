@@ -230,4 +230,14 @@ class UserController extends Controller
         $data['departments'] = Department::where('is_enable', 1)->get();
         return view('users.edit', $data);
     }
+
+    public function users_by_role(Request $request)
+    {
+        // fetch users by specific role
+        $roles = Role::find($request->role_id);
+        $users = User::role($roles->name)->where('company_id', user_company_id())->where('is_enable', 1)->orderBy('id')->get()->toArray();
+        $users_list = array_column($users, 'name', 'id');
+        
+        return response()->json(['users' => $users_list]);
+    }
 }
