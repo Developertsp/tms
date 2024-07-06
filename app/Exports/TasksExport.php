@@ -86,7 +86,7 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithTitl
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'color' => ['argb' => '00B050']
+                'color' => ['argb' => '4680ff']
             ]
         ]);
 
