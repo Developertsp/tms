@@ -35,7 +35,6 @@ class TaskController extends Controller
 
     public function index()
     {
-
         $user = Auth::user();
         $department_id = $user->department_id;
         $data['department_id'] = $department_id; 
@@ -130,6 +129,7 @@ class TaskController extends Controller
 
         $task = new Task();
 
+        $task['company_id']     = user_company_id();
         $task['project_id']     = $request->project_id;
         $task['priority']       = $request->priority;
         $task['status']         = $request->status;

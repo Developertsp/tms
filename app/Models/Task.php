@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Task extends Model
 {
@@ -13,6 +15,15 @@ class Task extends Model
     protected $fillable = [
         'status',
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('company', function (Builder $builder) {
+            if (!system_role()) {
+                $builder->where('company_id', Auth::user()->company_id);
+            }
+        });
+    }
 
     public function users()
     {
