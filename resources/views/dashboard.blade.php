@@ -68,7 +68,7 @@
     <div class="col-lg-12 col-md-12">
         <!-- support-section start -->
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="todayTotalTask">{{ $stats['todayTotalTask'] }}</h2>
@@ -90,11 +90,15 @@
                                 <h4 class="m-0 text-white" id="todayClosedTask">{{ $stats['todayClosedTask'] }}</h4>
                                 <span>Done</span>
                             </div>
+                            <div class="col">
+                                <h4 class="m-0 text-white" id="todayMissed">{{ $stats['todayMissed'] }}</h4>
+                                <span>Missed</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="weeklyTotalTask">{{ $stats['weeklyTotalTask'] }}</h2>
@@ -116,11 +120,15 @@
                                 <h4 class="m-0 text-white" id="weeklyClosedTask">{{ $stats['weeklyClosedTask'] }}</h4>
                                 <span>Done</span>
                             </div>
+                            <div class="col">
+                                <h4 class="m-0 text-white" id="weeklyMissed">{{ $stats['weeklyMissed'] }}</h4>
+                                <span>Missed</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="monthlyTotalTask">{{ $stats['monthlyTotalTask'] }}</h2>
@@ -142,11 +150,15 @@
                                 <h4 class="m-0 text-white" id="monthlyClosedTask">{{ $stats['monthlyClosedTask'] }}</h4>
                                 <span>Done</span>
                             </div>
+                            <div class="col">
+                                <h4 class="m-0 text-white" id="monthlyMissed">{{ $stats['monthlyMissed'] }}</h4>
+                                <span>Missed</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="totalTask">{{ $stats['totalTask'] }}</h2>
@@ -167,6 +179,10 @@
                             <div class="col">
                                 <h4 class="m-0 text-white" id="totalClosedTask">{{ $stats['totalClosedTask'] }}</h4>
                                 <span>Done</span>
+                            </div>
+                            <div class="col">
+                                <h4 class="m-0 text-white" id="missedTask">{{ $stats['missedTask'] }}</h4>
+                                <span>Missed</span>
                             </div>
                         </div>
                     </div>
@@ -470,6 +486,8 @@
         function fetchFilteredData(startDate, endDate) {
             const department = $('#departmentFilter').val();
             const user = $('#userFilter').val();
+            console.log(department)
+            console.log(user)
 
             $.ajax({
                 url: '{{ route("dashboard.filter") }}',
@@ -482,7 +500,7 @@
                 },
                 success: function(data) {
                     // Update your dashboard with the filtered data
-                    // console.log(data);
+                    console.log(data);
                     if(startDate && endDate){
                         $('#todayTotalTask').text(0);
                         $('#todayAssignedTask').text(0);
@@ -498,6 +516,10 @@
                         $('#monthlyAssignedTask').text(0);
                         $('#monthlyRunningTask').text(0);
                         $('#monthlyClosedTask').text(0);
+
+                        $('#weeklyMissed').text(0);
+                        $('#todayMissed').text(0);
+                        $('#monthlyMissed').text(0);
                     }
                     else{
                         $('#todayTotalTask').text(data.stats.todayTotalTask);
@@ -514,6 +536,10 @@
                         $('#monthlyAssignedTask').text(data.stats.monthlyAssignedTask);
                         $('#monthlyRunningTask').text(data.stats.monthlyRunningTask);
                         $('#monthlyClosedTask').text(data.stats.monthlyClosedTask);
+
+                        $('#weeklyMissed').text(data.stats.weeklyMissed);
+                        $('#todayMissed').text(data.stats.todayMissed);
+                        $('#monthlyMissed').text(data.stats.monthlyMissed);
                     }
 
                     $('#totalTask').text(data.stats.totalTask);
