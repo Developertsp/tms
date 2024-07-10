@@ -166,7 +166,9 @@
                                 <td>{{ $task->department->name ?? NULL }}</td>
                                 @endif
                                 <td>{{ $task->creator->name }}</td>
-                                <td>{{ $task->end_date ?? 'N/D' }}, Days({{$daysLabel ?? ''}})</td>
+                                <td>{{format_date($task->end_date)}}
+                                    {{-- {{ $task->end_date ?? 'N/D' }} --}}
+                                    , Days({{$daysLabel ?? ''}})</td>
                                 <td>{{ $label ?? 'Deadline N/D' }}</td>
 
                                 @can('delete-tasks')

@@ -11,6 +11,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectCommentController;
@@ -34,6 +35,12 @@ use App\Http\Controllers\CronJobController;
 
     
 // });
+Route::get('/forget_password', [LoginController::class, 'forget_password'])->name('forget_password');
+Route::post('/send_otp', [LoginController::class, 'send_otp'])->name('send_otp');
+Route::get('/verify_otp', [LoginController::class, 'verify_otp'])->name('verify_otp');
+Route::post('/verify_otp', [LoginController::class, 'verify_otp_post'])->name('verify_otp_post');
+Route::get('/password_reset_form', [LoginController::class, 'password_reset_form'])->name('password_reset_form');
+Route::post('/change_password', [LoginController::class, 'change_password'])->name('change_password');
 
 Auth::routes();
 

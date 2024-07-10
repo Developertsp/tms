@@ -18,8 +18,9 @@
 
     <link href="assets/login.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-     <!-- Toastr CSS -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <body>
@@ -30,19 +31,16 @@
                     <div class="d-table-cell align-middle">
 
                         <div class="text-center mt-4">
-                            <h1 class="h2">Welcome back, Dear</h1>
-                            <p class="lead">
-                                Sign in to your account to continue
-                            </p>
+                            <h1 class="h2">Forget Password</h1>
                         </div>
 
                         <div class="card">
                             <div class="card-body">
                                 <div class="m-sm-4">
-                                    <div class="text-center">
+                                    {{-- <div class="text-center">
                                         <img src="{{ asset('assets/avatar.jpg') }}" alt="logo" class="img-fluid rounded-circle" width="132" height="132" />
-                                    </div>
-                                    <form method="POST" action="{{ route('login') }}">
+                                    </div> --}}
+                                    <form method="POST" action="{{ route('send_otp') }}">
                                         @csrf
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
@@ -53,29 +51,9 @@
                                             </span>
                                             @enderror
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label" for="password">Password</label>
-                                            <input class="form-control form-control-lg" type="password"  id="password"  name="password" placeholder="Enter your password" />
-                                            @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                            <small>
-                                                <a href="{{route('forget_password')}}">Forgot password?</a>
-                                            </small>
-                                        </div>
-                                        <div>
-                                            <label class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="remember-me" name="remember-me" checked>
-                                                <span class="form-check-label">
-                                                    Remember me next time
-                                                </span>
-                                            </label>
-                                        </div>
                                         <div class="text-center mt-3">
                                             <!-- <button class="btn btn-lg btn-primary">Sign in</button> -->
-                                            <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
+                                            <button type="submit" class="btn btn-lg btn-primary">Send OTP</button>
                                         </div>
                                     </form>
                                 </div>
@@ -87,21 +65,22 @@
             </div>
         </div>
     </main>
-<!-- jQuery and Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<!-- Toastr Notification Script -->
-<script>
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-</script>
+    <!-- jQuery and Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Toastr Notification Script -->
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    </script>
+
     <script src="js/app.js"></script>
-
 </body>
 
 </html>

@@ -44,7 +44,7 @@ class DashboardController extends Controller
             case $CONSTANTS['Just Self']:
                 $result = Task::whereHas('users', function ($query) use ($user) {
                     $query->where('user_id', $user->id);
-                    })->where('is_enable', 1)->get();
+                })->where('is_enable', 1)->get();
                 $response = $this->make_dashboard_data($result);
                 break;
         }
@@ -55,12 +55,11 @@ class DashboardController extends Controller
             $data['departments'] = Department::where('is_enable', 1)->count();
             $data['projects'] = Project::where('is_enable', 1)->count();
             $data['users'] = User::where('is_enable', 1)->count();
-        }
-        else {
+        } else {
             $data['companies'] = Company::where('is_enable', 1)->count();
             $data['departments'] = Department::where('is_enable', 1)->count();
             $data['total_projects'] = Project::where(['is_enable' => 1, 'company_id' => user_company_id()])->count();
-            $data['projects'] = Project::where(['is_enable' => 1, 'company_id' => user_company_id()])->orderBy('id','DESC')->take('5')->get();
+            $data['projects'] = Project::where(['is_enable' => 1, 'company_id' => user_company_id()])->orderBy('id', 'DESC')->take('5')->get();
             $data['users'] = User::where('is_enable', 1)->count();
         }
 
@@ -69,16 +68,14 @@ class DashboardController extends Controller
             $data['usersList'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
             $data['departmentsList'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
         } else {
-            if(system_role()){
+            if (system_role()) {
                 $data['usersList'] = User::where('is_enable', 1)->get();
                 $data['departmentsList'] = Department::where('is_enable', 1)->get();
-            }
-            else{
+            } else {
                 $data['usersList'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
                 $data['departmentsList'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
             }
         }
-
         return view('dashboard', $data);
     }
 
@@ -129,7 +126,6 @@ class DashboardController extends Controller
             $startOfWeek = Carbon::now()->startOfWeek(Carbon::MONDAY);
             $endOfWeek = Carbon::now()->endOfWeek(Carbon::SATURDAY);
             return $createdDate->between($startOfWeek, $endOfWeek);
-
         });
         $weeklyTotal = count($weeklyTotal);
 
@@ -193,10 +189,43 @@ class DashboardController extends Controller
         // missed
         $todayDate = Carbon::now()->format('Y-m-d');
         $missedTask = $result->filter(function ($value) use ($todayDate) {
-            return ($value->closed_date > $value->end_date) || 
+            return ($value->closed_date > $value->end_date) ||
                 ($value->end_date && $todayDate > $value->end_date && !$value->closed_date);
         });
         $missedTask = count($missedTask);
+
+
+
+        // Today Missed Tasks
+        $todayMissed = $result->filter(function ($value) use ($todayDate) {
+            $createdDate = Carbon::parse($value['created_at']);
+            return $createdDate->isToday() &&
+                (($value->closed_date > $value->end_date) ||
+                    ($value->end_date && $todayDate > $value->end_date && !$value->closed_date));
+        });
+        $todayMissed = count($todayMissed);
+
+        // Weekly Missed Tasks
+        $weeklyMissed = $result->filter(function ($value) use ($todayDate) {
+            $createdDate = Carbon::parse($value['created_at']);
+            $startOfWeek = Carbon::now()->startOfWeek(Carbon::MONDAY);
+            $endOfWeek = Carbon::now()->endOfWeek(Carbon::SATURDAY);
+            return $createdDate->between($startOfWeek, $endOfWeek) &&
+                (($value->closed_date > $value->end_date) ||
+                    ($value->end_date && $todayDate > $value->end_date && !$value->closed_date));
+        });
+        $weeklyMissed = count($weeklyMissed);
+
+        // Monthly Missed Tasks
+        $monthlyMissed = $result->filter(function ($value) use ($todayDate) {
+            $createdDate = Carbon::parse($value['created_at']);
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $endOfMonth = Carbon::now()->endOfMonth();
+            return $createdDate->between($startOfMonth, $endOfMonth) &&
+                (($value->closed_date > $value->end_date) ||
+                    ($value->end_date && $todayDate > $value->end_date && !$value->closed_date));
+        });
+        $monthlyMissed = count($monthlyMissed);
 
         return [
             'totalTask' => $total,
@@ -219,7 +248,10 @@ class DashboardController extends Controller
             'monthlyRunningTask' => $monthlyRunning,
             'monthlyClosedTask' => $monthlyClosed,
 
-            'missedTask' => $missedTask
+            'missedTask' => $missedTask,
+            'todayMissed'=>$todayMissed,
+            'weeklyMissed'=>$weeklyMissed,
+            'monthlyMissed'=>$monthlyMissed,
         ];
     }
 
@@ -229,7 +261,7 @@ class DashboardController extends Controller
         $user = $request->input('user');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        
+
         // fetch task list
         db::enableQueryLog();
         $query = Task::where('is_enable', 1);
@@ -245,7 +277,7 @@ class DashboardController extends Controller
 
             $result = Task::whereHas('users', function ($query) use ($user) {
                 $query->where('user_id', $user);
-                })->where('is_enable', 1)->get();
+            })->where('is_enable', 1)->get();
         }
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate)->startOfDay();
@@ -255,7 +287,7 @@ class DashboardController extends Controller
         $tasks = $query->get();
 
         $response = $this->make_dashboard_data($tasks);
-        
+
         return response()->json(['stats' => $response]);
     }
 }

@@ -48,7 +48,7 @@
                                 @if (system_role())
                                 <td>{{ $project->company->name }}</td>
                                 @endif
-                                <td>{{ $project->deadline }}</td>
+                                <td>{{ format_date($project->deadline) }}</td>
                                 <td>
                                     {{-- <a class="btn btn-info" href="{{ route('roles.show', $role->id) }}">Show</a> --}}
                                     @can('update-projects')
