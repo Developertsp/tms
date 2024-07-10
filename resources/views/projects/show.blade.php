@@ -23,7 +23,7 @@
 
             <div class="bg-secondary rounded py-2 mt-2 px-4 text-white">
                 <h4 class="fw-bold text-white "><u> Deadline: </u></h4>
-                <p class="card-title">{{ $project->deadline }}</p>
+                <p class="card-title">{{ format_date($project->deadline) }}</p>
             </div>
 
             <div class="bg-secondary rounded py-2 mt-2 px-4 text-white">
