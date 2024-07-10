@@ -6,8 +6,7 @@ use GuzzleHttp\Client;
 class PushNotificationService
 {
     public function send($post, $user_ids)
-{
-    try {
+    {
         if(count($user_ids) < 1) {
             return true;
         }
@@ -59,11 +58,6 @@ class PushNotificationService
             'json' => $body,
             'verify' => false,
         ]);
-
         return $response;
-    } catch (\Exception $e) {
-       
     }
-}
-
 }

@@ -70,9 +70,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class);
     }
-
-    public function forget_password_otp()
-    {
-        return $this->hasOne(ForgetPasswordOtp::class);
-    }
 }

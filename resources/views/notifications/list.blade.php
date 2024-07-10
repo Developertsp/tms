@@ -39,7 +39,7 @@
                                     <span class="text-center n-time text-muted"></span>
                                     @endif
                                 </td>
-                                <td>{{ format_date_with_time($notification->created_at) }}</td>
+                                <td>{{ $notification->created_at }}</td>
                                 <td class="d-flex align-items-center justify-content-center">
                                     <a href="{{ route('tasks.show', base64_encode($notification->task_id)) }}">
                                         <i class="fas fa-eye"></i>

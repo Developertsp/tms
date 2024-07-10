@@ -18,8 +18,6 @@
 
     <link href="assets/login.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-     <!-- Toastr CSS -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <body>
@@ -62,7 +60,7 @@
                                             </span>
                                             @enderror
                                             <small>
-                                                <a href="{{route('forget_password')}}">Forgot password?</a>
+                                                <a href="#">Forgot password?</a>
                                             </small>
                                         </div>
                                         <div>
@@ -87,19 +85,7 @@
             </div>
         </div>
     </main>
-<!-- jQuery and Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<!-- Toastr Notification Script -->
-<script>
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-</script>
     <script src="js/app.js"></script>
 
 </body>
