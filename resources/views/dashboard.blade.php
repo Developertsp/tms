@@ -470,7 +470,6 @@
         function fetchFilteredData(startDate, endDate) {
             const department = $('#departmentFilter').val();
             const user = $('#userFilter').val();
-
             $.ajax({
                 url: '{{ route("dashboard.filter") }}',
                 type: 'GET',
