@@ -486,8 +486,8 @@
         function fetchFilteredData(startDate, endDate) {
             const department = $('#departmentFilter').val();
             const user = $('#userFilter').val();
-            console.log(department)
-            console.log(user)
+            // console.log(department)
+            // console.log(user)
 
             $.ajax({
                 url: '{{ route("dashboard.filter") }}',
@@ -500,7 +500,7 @@
                 },
                 success: function(data) {
                     // Update your dashboard with the filtered data
-                    console.log(data);
+                    // console.log(data);
                     if(startDate && endDate){
                         $('#todayTotalTask').text(0);
                         $('#todayAssignedTask').text(0);
