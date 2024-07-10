@@ -94,9 +94,7 @@ class TaskController extends Controller
     public function create()
     {
         $user = Auth::user();
-   
         $department_id = $user->department_id;
-        
 
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['status']     = config('constants.STATUS_LIST');
