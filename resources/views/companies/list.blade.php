@@ -34,7 +34,7 @@
                                         <td>{{ $company->email }}</td>
                                         <td>{{ $company->phone }}</td>
                                         <td>{{ $company->whatsapp }}</td>
-                                        <td>{{format_date($company->expiry_date) }}</td>
+                                        <td>{{ $company->expiry_date }}</td>
                                         <td>
                                             @can('update-companies')
                                             <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('companies.edit', $company->id) }}">Edit</a>
