@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserWelcomeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Company;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -54,7 +56,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // check for spatie role id instead of name
+        // Validate the request data
         $this->validate($request, [
             'name'          => 'required',
             'company_id'    => 'required',
@@ -68,14 +70,16 @@ class UserController extends Controller
             'phone'         => 'nullable|numeric',
             'whatsapp'      => 'nullable|numeric',
         ]);
-
+    
+        // Handle the profile picture file upload
         if ($request->hasFile('profile_pic')) {
             $image = $request->file('profile_pic');
             $image_name = time() . '_' . uniqid('', true) . '.' . $image->getClientOriginalExtension();
             $org_name = $image->getClientOriginalName();
             $request->file('profile_pic')->storeAs('public/profile_pics/', $image_name);
         }
-
+    
+        // Create a new user instance
         $user = new User();
         $user->name         = $request->name;
         $user->email        = $request->email;
@@ -90,15 +94,26 @@ class UserController extends Controller
         $user->whatsapp     = $request->whatsapp;
         $user->created_by   = Auth::id();
         $user->department_id = $request->department ?? NULL;
-
+    
         if ($request->hasFile('profile_pic')) {
             $user->profile_pic = $image_name;
         }
-
+    
+        // Save the user and send the welcome email
         $response = $user->save();
-        $user->assignRole($request->roles);
-
-        return redirect()->route('users.list')->with('success', 'User created successfully');
+        if ($response) {
+            $user->assignRole($request->roles);
+    
+            try {
+                Mail::to($user->email)->send(new UserWelcomeMail($user, $request->password));
+                
+            } catch (\Exception $e) {
+                // return redirect()->route('users.list')->with('warning', 'User created successfully, but the welcome email could not be sent.');
+            }
+            return redirect()->route('users.list')->with('success', 'User created successfully and welcome email sent.');
+        } else {
+            return redirect()->back()->with('error', 'User was not created.');
+        }
     }
 
     public function edit($id)
