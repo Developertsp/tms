@@ -71,7 +71,7 @@
 
             <div class="d-flex justify-content-between mt-4">
                 <h5>Task No:</h5>
-                <h5><span class="badge badge-soft-success btn btn-link btn-primary float-end"> #{{ $task->id ?? null }} </span></h5>
+                <h5><span class="badge badge-soft-success btn btn-link  float-end"> #{{ $task->id ?? null }} </span></h5>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
