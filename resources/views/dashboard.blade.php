@@ -4,7 +4,11 @@
 @section('breadcrumTitle', 'User Dashboard')
 
 @section('content')
-
+<style>
+    .bottom-row{
+        flex-wrap: unset
+    }
+    </style>
 <!-- Start Page Content here -->
 <!-- [ Main Content ] start -->
 @if(in_array(Auth::user()->scope, [1,2]) )
@@ -67,8 +71,8 @@
 <div class="row">
     <div class="col-lg-12 col-md-12">
         <!-- support-section start -->
-        <div class="row">
-            <div class="col-sm-4">
+        <div class="row" style="font-size: 12px">
+            <div class="col-sm-3">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="todayTotalTask">{{ $stats['todayTotalTask'] }}</h2>
@@ -77,7 +81,7 @@
                     </div>
                     {{-- <div id="support-chart"></div> --}}
                     <div class="card-footer bg-primary text-white">
-                        <div class="row text-center">
+                        <div class="row text-center bottom-row">
                             <div class="col">
                                 <h4 class="m-0 text-white" id="todayAssignedTask">{{ $stats['todayAssignedTask'] }}</h4>
                                 <span>Open</span>
@@ -98,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="weeklyTotalTask">{{ $stats['weeklyTotalTask'] }}</h2>
@@ -107,7 +111,7 @@
                     </div>
                     {{-- <div id="support-chart"></div> --}}
                     <div class="card-footer bg-primary text-white">
-                        <div class="row text-center">
+                        <div class="row text-center bottom-row">
                             <div class="col">
                                 <h4 class="m-0 text-white" id="weeklyAssignedTask">{{ $stats['weeklyAssignedTask'] }}</h4>
                                 <span>Open</span>
@@ -128,7 +132,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="monthlyTotalTask">{{ $stats['monthlyTotalTask'] }}</h2>
@@ -137,7 +141,7 @@
                     </div>
                     {{-- <div id="support-chart"></div> --}}
                     <div class="card-footer bg-primary text-white">
-                        <div class="row text-center">
+                        <div class="row text-center bottom-row">
                             <div class="col">
                                 <h4 class="m-0 text-white" id="monthlyAssignedTask">{{ $stats['monthlyAssignedTask'] }}</h4>
                                 <span>Open</span>
@@ -158,7 +162,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card support-bar overflow-hidden">
                     <div class="card-body pb-0">
                         <h2 class="m-0" id="totalTask">{{ $stats['totalTask'] }}</h2>
@@ -167,7 +171,7 @@
                     </div>
                     {{-- <div id="support-chart1"></div> --}}
                     <div class="card-footer bg-success text-white">
-                        <div class="row text-center">
+                        <div class="row text-center bottom-row" >
                             <div class="col">
                                 <h4 class="m-0 text-white" id="totalAssignedTask">{{ $stats['totalAssignedTask'] }}</h4>
                                 <span>Open</span>

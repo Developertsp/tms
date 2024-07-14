@@ -54,8 +54,9 @@ Route::post('users/store', [UserController::class, 'store'])->name('users.store'
 Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::delete('users/show/{id}', [UserController::class, 'show'])->name('users.show');
+Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
 Route::get('users/users_by_role', [UserController::class, 'users_by_role'])->name('users.by.role');
+Route::get('users/department', [UserController::class, 'users_by_department'])->name('users.by.department');
 
 // User Profile Routes
 Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');

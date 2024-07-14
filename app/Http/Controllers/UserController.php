@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Company;
+use App\Models\Project;
+use App\Models\Task;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -70,7 +73,7 @@ class UserController extends Controller
             'phone'         => 'nullable|numeric',
             'whatsapp'      => 'nullable|numeric',
         ]);
-    
+
         // Handle the profile picture file upload
         if ($request->hasFile('profile_pic')) {
             $image = $request->file('profile_pic');
@@ -78,7 +81,7 @@ class UserController extends Controller
             $org_name = $image->getClientOriginalName();
             $request->file('profile_pic')->storeAs('public/profile_pics/', $image_name);
         }
-    
+
         // Create a new user instance
         $user = new User();
         $user->name         = $request->name;
@@ -94,19 +97,18 @@ class UserController extends Controller
         $user->whatsapp     = $request->whatsapp;
         $user->created_by   = Auth::id();
         $user->department_id = $request->department ?? NULL;
-    
+
         if ($request->hasFile('profile_pic')) {
             $user->profile_pic = $image_name;
         }
-    
+
         // Save the user and send the welcome email
         $response = $user->save();
         if ($response) {
             $user->assignRole($request->roles);
-    
+
             try {
                 Mail::to($user->email)->send(new UserWelcomeMail($user, $request->password));
-                
             } catch (\Exception $e) {
                 // return redirect()->route('users.list')->with('warning', 'User created successfully, but the welcome email could not be sent.');
             }
@@ -234,25 +236,98 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $data['user'] = User::with('company:id,name')->find($id);
-        if (system_role()) {
-            $data['user_role'] = $data['user']->roles->pluck('name', 'name')->all();
-            $data['roles'] = Role::whereNull('company_id')->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
-            $data['companies'] = Company::where('is_enable', 1)->pluck('name', 'id')->all();
+        $data['user'] = User::find($id);
+    
+        // Get all tasks assigned to the user
+        $tasks = Task::with('users')->where('is_enable', 1)
+            ->whereHas('users', function ($query) use ($id) { 
+                $query->where('task_user.user_id', $id);
+            })
+            ->get();
+    
+        // Get task statuses from config
+        $taskStatus = Config::get('constants.TASK_STATUS');
+    
+        // Total tasks assigned to the user
+        $totalTasks = $tasks->count();
+    
+        // Completed tasks
+        $completedTasks = $tasks->where('status', $taskStatus['Completed'])->count();
+    
+        // Missed tasks (assuming 'Revision' indicates a missed task)
+        $missedTasks = $tasks->where('status', $taskStatus['Revision'])->count();
+    
+        // Assigned tasks (tasks that are neither completed nor missed)
+        $assignedTasks = $tasks->whereNotIn('status', [$taskStatus['Completed'], $taskStatus['Revision']])->count();
+    
+        // $data['tasks'] = $tasks;
+        $data['totalTasks'] = $totalTasks;
+        $data['completedTasks'] = $completedTasks;
+        $data['missedTasks'] = $missedTasks;
+        $data['assignedTasks'] = $assignedTasks;
+
+        $user = $data['user'];
+        $department_id = $user->department_id;
+        $data['department_id'] = $department_id; 
+        if ($department_id) {
+            if ($user->scope == 2) {
+                $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
+                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            } else {
+                $data['tasks'] = Task::whereHas('users', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })->where('is_enable', 1)
+                    ->with('project', 'department', 'users', 'creator')
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+            }
+            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
         } else {
-            $data['roles'] = Role::where('company_id', user_company_id())->orderBy('id')->get();
+            $data['tasks'] = Task::where('is_enable', 1)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
+            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
-        $data['departments'] = Department::where('is_enable', 1)->get();
-        return view('users.edit', $data);
+
+        $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        return view('users.show', $data);
     }
+    
+
 
     public function users_by_role(Request $request)
     {
         // fetch users by specific role
         $roles = Role::find($request->role_id);
-        $users = User::role($roles->name)->where('company_id', user_company_id())->where('is_enable', 1)->orderBy('id')->get()->toArray();
+        $users = User::role($roles->name)->where('is_enable', 1)->orderBy('id')->get()->toArray();
         $users_list = array_column($users, 'name', 'id');
-        
+
+        return response()->json(['users' => $users_list]);
+    }
+    public function users_by_department(Request $request)
+    {
+        // Check if department name is provided
+        if (empty($request->departmentName)) {
+            // Fetch all users if department name is empty
+            $users = User::where('is_enable', 1)->get()->toArray();
+        } else {
+            // Fetch users by specific department
+            $department = Department::where('name', $request->departmentName)->first();
+            if ($department) {
+                $users = User::where('department_id', $department->id)
+                    ->where('is_enable', 1)
+                    ->get()
+                    ->toArray();
+            } else {
+                // Return an empty array if the department is not found
+                $users = [];
+            }
+        }
+
+        // Create a list of users with 'id' as the key and 'name' as the value
+        $users_list = array_column($users, 'name', 'id');
+
         return response()->json(['users' => $users_list]);
     }
 }

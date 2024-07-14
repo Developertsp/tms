@@ -234,6 +234,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
         $(document).ready(function() {
+
+            // $('#tasksTable').DataTable({
+            //     "order": [], // Disable initial sorting
+            //     "paging": false,
+            //     "info": false
+            // });
+
             var table = $('#tasksTable').DataTable({
                 "order": [
                     [0, "desc"]
@@ -271,6 +278,32 @@
             $('#projectFilter').on('change', function() {
                 var selectedValue = $(this).val();
                 table.column(4).search(selectedValue).draw();
+            });
+
+
+            $('#departmentFilter').on('change', function(){
+                var departmentName = $('#departmentFilter').val();
+                $.ajax({
+                    url: '{{ route("users.by.department") }}',
+                    type: 'GET',
+                    data: {
+                        departmentName: departmentName
+                    },
+                    success: function(response) {
+                        // console.log(response);
+
+                        var usersSelect = $('#userFilter');
+                        usersSelect.empty();
+                        usersSelect.append('<option value="" selected>Select User</option>'); // Add the default option
+                        
+                        $.each(response.users, function(key, value) {
+                            usersSelect.append('<option value="' + value + '">' + value + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
             });
         });
     </script>

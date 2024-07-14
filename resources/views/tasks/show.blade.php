@@ -93,8 +93,9 @@
             <div class="d-flex justify-content-between ">
                 <h5>Task End:</h5>
                 <h5>
+                   
                     <span class="badge badge-soft-success float-end rounded-pill py-1 "> {{ $task->end_date ? $task->formatted_end_date : '' }}</span> 
-                    @if(in_array(Auth::user()->scope, [1,2]))
+                    @if(in_array(Auth::user()->scope, [1,2,3]))
                         <i class="fa fa-edit float-right mx-2 mt-1" style="cursor:pointer;" data-toggle="modal" data-target="#deadline_modal"></i> 
                     @endif
                 </h5>
