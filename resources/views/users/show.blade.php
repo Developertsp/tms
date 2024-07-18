@@ -1,14 +1,21 @@
 @extends('layout.app')
 @section('title', 'Update User | TSP - Task Management System')
 @section('pageTitle', 'User Details')
-@section('breadcrumTitle', 'User Details')
+@section('breadcrumTitle', $user->name)
 @section('content')
 
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>User Detail</h5>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5>User Detail</h5>
+                        </div>
+                        <div>
+                            <h5>Performance : <span id="performance">{{ number_format($performance, 1) }}</span>%</h5>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -54,8 +61,6 @@
                             </div>
                         </div>
 
-
-
                         <div class="col-lg-2 col-md-6 col-sm-12">
                             <div class="form-group fill">
                                 <label for="projectFilter">Filter by Projects:</label>
@@ -67,10 +72,16 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="form-group fill">
+                                <label for="statusFilter">Date Range Filter:</label>
+                                <input type="text" id="dateRangeFilter" class="form-control" />
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <div class="card text-white bg-primary mb-3">
+                            <div id="totalTasksCard" class="card text-white bg-primary mb-3">
                                 <div class="card-header">
                                     <i class="fas fa-tasks"></i> Total Tasks
                                 </div>
@@ -80,7 +91,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card text-white bg-success mb-3">
+                            <div id="completedTasksCard" class="card text-white bg-success mb-3">
                                 <div class="card-header">
                                     <i class="fas fa-check-circle"></i> Completed Tasks
                                 </div>
@@ -90,7 +101,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card text-white bg-danger mb-3">
+                            <div id="missedTasksCard" class="card text-white bg-danger mb-3">
                                 <div class="card-header">
                                     <i class="fas fa-times-circle"></i> Missed Tasks
                                 </div>
@@ -100,7 +111,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card text-white bg-warning mb-3">
+                            <div id="assignedTasksCard" class="card text-white bg-warning mb-3">
                                 <div class="card-header">
                                     <i class="fas fa-clipboard-list"></i> Assigned Tasks
                                 </div>
@@ -113,8 +124,6 @@
                 </div>
                 <div class="card-body table-border-style">
                     <div class="table-responsive">
-
-
                         <table class="table" id="tasksTable">
                             <thead>
                                 <tr>
@@ -160,14 +169,6 @@
                                                     ? $daysRemaining . ' Remaining'
                                                     : abs($daysRemaining) . ' Over';
                                         }
-
-                                        // if ($task_status[$task->status] == 'Closed') {
-                                        // $label = 'Deadline Acheived';
-                                        // } elseif ($isNotClosed && $isDeadlinePassed) {
-                                        // $label = 'Deadline Missed';
-                                        // } elseif ($isNotClosed && !$isDeadlinePassed) {
-                                        // $label = 'Performance N/D';
-                                        // }
 
                                         if (
                                             $task->closed_date > $task->end_date ||
@@ -246,20 +247,30 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
+
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
         <script>
             $(document).ready(function() {
+                $('#dateRangeFilter').daterangepicker({
+                    opens: 'left'
+                }, function(start, end, label) {
+                    const startDate = $('#dateRangeFilter').data('daterangepicker').startDate.format(
+                        'YYYY-MM-DD');
+                    const endDate = $('#dateRangeFilter').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                    fetchFilteredData(startDate, endDate);
+                });
+
+
                 var table = $('#tasksTable').DataTable({
-                    "order": [
-                        [0, "desc"]
-                    ]
+                    "order": [], // Disable initial sorting
+                    "paging": false,
+                    "info": false
                 });
 
                 // Filter for task status
@@ -324,6 +335,194 @@
                     });
                 });
             });
+
+            function fetchFilteredData(startDate, endDate) {
+                var userId = {{ $user->id }};
+
+                $.ajax({
+                    url: '{{ route('users.by.filter_by_date') }}',
+                    type: 'POST',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate,
+                        userId: userId,
+                        _token: '{{ csrf_token() }}' // Add CSRF token here
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        // Clear existing table and card contents
+                        $('#tasksTable tbody').empty();
+                        $('#totalTasksCard .card-title').text('');
+                        $('#completedTasksCard .card-title').text('');
+                        $('#missedTasksCard .card-title').text('');
+                        $('#assignedTasksCard .card-title').text('');
+
+                        // Assuming response contains an array of task data
+                        response.tasks.forEach(function(task) {
+                            var currentDate = new Date();
+                            var endDate = task.end_date ? new Date(task.end_date) : null;
+                            var isDeadlinePassed = endDate && endDate < currentDate;
+                            var label = getTaskLabel(task, currentDate, endDate);
+
+                            var newRow = `
+                    <tr class="${isDeadlinePassed ? 'bg-danger' : ''}">
+                        <td>
+                            <a href="{{ route('tasks.show', '') }}/${btoa(task.id)}" class="fw-bold">
+                                #${task.id} <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ route('tasks.show', '') }}/${btoa(task.id)}"
+                                class="btn ${getPriorityClass(task.priority)} rounded-pill py-0">
+                                ${getPriorityText(task.priority)}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ route('tasks.show', '') }}/${btoa(task.id)}"
+                                class="btn ${getStatusClass(task.status)} rounded-pill py-0">
+                                ${getStatusText(task.status)}
+                            </a>
+                        </td>
+                        <td>
+                            ${task.users.map(user => user.name).join(', ')}
+                        </td>
+                        <td>${task.project ? task.project.name : ''}</td>
+                        <td>${task.title}</td>
+                       
+                        <td>${task?.creator?.name}</td>
+                        <td>${formatDate(task.end_date)}, Days(${label.daysLabel})</td>
+                        <td>${label.label}</td>
+                        @can('delete-tasks')
+                            <td>
+                                <form action="{{ route('tasks.destroy', '') }}/${task.id}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger rounded-pill px-4 py-1"
+                                        style="border: 2px solid white;"
+                                        onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                </form>
+                            </td>
+                        @endcan
+                    </tr>
+                `;
+
+                            $('#tasksTable tbody').append(newRow);
+                        });
+
+                        // Update cards
+                        $('#totalTasksCard .card-title').text(response.totalTasks);
+                        $('#completedTasksCard .card-title').text(response.completedTasks);
+                        $('#missedTasksCard .card-title').text(response.missedTasks);
+                        $('#assignedTasksCard .card-title').text(response.assignedTasks);
+                        $('#performance').text(response.performance);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+
+            function getTaskLabel(task, currentDate, endDate) {
+                var todayDate = currentDate.toISOString().split('T')[0];
+                var isDeadlinePassed = endDate && endDate < currentDate;
+                var daysRemaining = endDate ? Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24)) : null;
+
+                if (task.closed_date > task.end_date || (task.end_date && todayDate > task.end_date && !task.closed_date)) {
+                    return {
+                        label: 'Deadline Missed',
+                        daysLabel: daysRemaining + ' Over'
+                    };
+                } else if (task.closed_date && task.closed_date <= task.end_date) {
+                    return {
+                        label: 'Deadline Acheived',
+                        daysLabel: daysRemaining + ' Remaining'
+                    };
+                } else if (endDate && endDate.toISOString().split('T')[0] === todayDate) {
+                    return {
+                        label: 'Deadline Today',
+                        daysLabel: daysRemaining + ' Remaining'
+                    };
+                } else if (endDate && endDate.toISOString().split('T')[0] === new Date(currentDate.getTime() + 86400000)
+                    .toISOString().split('T')[0]) {
+                    return {
+                        label: 'Deadline Tomorrow',
+                        daysLabel: daysRemaining + ' Remaining'
+                    };
+                } else if (endDate && currentDate - endDate <= 7 * 86400000) {
+                    return {
+                        label: 'Deadline This Week',
+                        daysLabel: daysRemaining + ' Remaining'
+                    };
+                } else {
+                    return {
+                        label: 'Performance N/D',
+                        daysLabel: daysRemaining + ' Remaining'
+                    };
+                }
+            }
+
+            function getPriorityClass(priority) {
+                switch (priority) {
+                    case 1:
+                        return 'btn-secondary';
+                    case 2:
+                        return 'btn-warning';
+                    case 3:
+                        return 'btn-danger';
+                    default:
+                        return 'btn-secondary';
+                }
+            }
+
+            function getPriorityText(priority) {
+                switch (priority) {
+                    case 1:
+                        return 'Low';
+                    case 2:
+                        return 'Medium';
+                    case 3:
+                        return 'High';
+                    default:
+                        return 'N/A';
+                }
+            }
+
+            function getStatusClass(status) {
+                switch (status) {
+                    case 1:
+                        return 'btn-primary';
+                    case 2:
+                        return 'btn-success';
+                    case 3:
+                        return 'btn-secondary';
+                    default:
+                        return 'btn-secondary';
+                }
+            }
+
+            function getStatusText(status) {
+                switch (status) {
+                    case 1:
+                        return 'Assigned';
+                    case 2:
+                        return 'Closed';
+                    case 3:
+                        return 'In Progress';
+                    default:
+                        return 'N/A';
+                }
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return 'N/D';
+                var options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            }
         </script>
     @endpush
 

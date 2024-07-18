@@ -237,42 +237,58 @@ class UserController extends Controller
     public function show($id)
     {
         $data['user'] = User::find($id);
-    
+
         // Get all tasks assigned to the user
         $tasks = Task::with('users')->where('is_enable', 1)
-            ->whereHas('users', function ($query) use ($id) { 
+            ->whereHas('users', function ($query) use ($id) {
                 $query->where('task_user.user_id', $id);
             })
             ->get();
-    
+
         // Get task statuses from config
         $taskStatus = Config::get('constants.TASK_STATUS');
-    
+
         // Total tasks assigned to the user
         $totalTasks = $tasks->count();
-    
+
         // Completed tasks
         $completedTasks = $tasks->where('status', $taskStatus['Completed'])->count();
-    
+
         // Missed tasks (assuming 'Revision' indicates a missed task)
         $missedTasks = $tasks->where('status', $taskStatus['Revision'])->count();
-    
+
         // Assigned tasks (tasks that are neither completed nor missed)
         $assignedTasks = $tasks->whereNotIn('status', [$taskStatus['Completed'], $taskStatus['Revision']])->count();
-    
-        // $data['tasks'] = $tasks;
+
+        // Closed tasks
+        $closedTasks = $tasks->where('status', $taskStatus['Closed'])->count();
+
+        // Calculate performance
+        $performance = $totalTasks > 0 ? ($closedTasks / $totalTasks) * 100 : 0;
+
+        // Add task data to the $data array
+        $data['tasks'] = $tasks;
         $data['totalTasks'] = $totalTasks;
         $data['completedTasks'] = $completedTasks;
         $data['missedTasks'] = $missedTasks;
         $data['assignedTasks'] = $assignedTasks;
+        $data['performance'] = $performance;
 
         $user = $data['user'];
         $department_id = $user->department_id;
-        $data['department_id'] = $department_id; 
+        $data['department_id'] = $department_id;
+
         if ($department_id) {
             if ($user->scope == 2) {
-                $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
-                $data['users'] = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+                $data['tasks'] = Task::where('is_enable', 1)
+                    ->where('department_id', $department_id)
+                    ->with('project', 'department', 'users', 'creator')
+                    ->orderBy('id', 'desc')
+                    ->get();
+                $data['users'] = User::where('is_enable', 1)
+                    ->where('department_id', $department_id)
+                    ->where('company_id', user_company_id())
+                    ->get();
             } else {
                 $data['tasks'] = Task::whereHas('users', function ($query) use ($user) {
                     $query->where('user_id', $user->id);
@@ -280,20 +296,92 @@ class UserController extends Controller
                     ->with('project', 'department', 'users', 'creator')
                     ->orderBy('id', 'desc')
                     ->get();
-
-                $data['users'] = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
+                $data['users'] = User::where('is_enable', 1)
+                    ->where('id', $user->id)
+                    ->where('department_id', $department_id)
+                    ->where('company_id', user_company_id())
+                    ->get();
             }
-            $data['departments'] = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
+            $data['departments'] = Department::where('is_enable', 1)
+                ->where('id', $department_id)
+                ->where('company_id', user_company_id())
+                ->get();
         } else {
-            $data['tasks'] = Task::where('is_enable', 1)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
-            $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
-            $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
+            $data['tasks'] = Task::where('is_enable', 1)
+                ->with('project', 'department', 'users', 'creator')
+                ->orderBy('id', 'desc')
+                ->get();
+            $data['users'] = User::where('is_enable', 1)
+                ->where('company_id', user_company_id())
+                ->get();
+            $data['departments'] = Department::where('is_enable', 1)
+                ->where('company_id', user_company_id())
+                ->get();
         }
 
-        $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
+        $data['projects'] = Project::where('is_enable', 1)
+            ->where('company_id', user_company_id())
+            ->get();
+        // return $data['performance'];
         return view('users.show', $data);
     }
-    
+
+    public function filter_by_date(Request $request)
+    {
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $userId = $request->userId;
+
+        // Ensure startDate, endDate, and userId are not empty
+        if (empty($startDate) || empty($endDate) || empty($userId)) {
+            return response()->json(['error' => 'Start date, end date, and user ID are required'], 400);
+        }
+
+        // Get task statuses from config
+        $taskStatus = Config::get('constants.TASK_STATUS');
+
+        // Filter tasks between start date and end date and by user ID
+        $tasks = Task::with('users','project','creator')
+            ->where('is_enable', 1)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('task_user.user_id', $userId);
+            })
+            ->get();
+
+        // Total tasks
+        $totalTasks = $tasks->count();
+
+        // Completed tasks
+        $completedTasks = $tasks->where('status', $taskStatus['Completed'])->count();
+
+        // Missed tasks (assuming 'Revision' indicates a missed task)
+        $missedTasks = $tasks->where('status', $taskStatus['Revision'])->count();
+
+        // Assigned tasks (tasks that are neither completed nor missed)
+        $assignedTasks = $tasks->whereNotIn('status', [$taskStatus['Completed'], $taskStatus['Revision']])->count();
+
+        // Closed tasks
+        $closedTasks = $tasks->where('status', $taskStatus['Closed'])->count();
+
+        // Calculate performance
+        $performance = $totalTasks > 0 ? number_format(($closedTasks / $totalTasks) * 100, 1) : 0;
+
+        // Prepare response data
+        $data = [
+            'totalTasks' => $totalTasks,
+            'completedTasks' => $completedTasks,
+            'missedTasks' => $missedTasks,
+            'assignedTasks' => $assignedTasks,
+            'performance' => $performance,
+            'tasks' => $tasks
+        ];
+
+        return response()->json($data);
+    }
+
+
+
 
 
     public function users_by_role(Request $request)

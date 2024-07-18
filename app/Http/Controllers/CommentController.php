@@ -13,7 +13,7 @@ class CommentController extends Controller
 {
     public function store(Request $request)
     {
-        // return $request;
+        
 
         $this->validate($request, [
             'comment' => 'required',
@@ -25,6 +25,7 @@ class CommentController extends Controller
         $comment['task_id'] = $request->task_id;
         $comment['comment'] = $request->comment;
         $comment['is_private'] = 2;
+        
 
         $comment->save();
 
@@ -46,14 +47,34 @@ class CommentController extends Controller
         }
         $notification->save();
 
+         // Notification
+         $task = Task::with('users')->find($request->task_id);
+         $tagged_user_notificaton = new Notification();
+         $tagged_user_notificaton['task_id']    = $request->task_id;
+         $tagged_user_notificaton['title']      = 'New Comment';
+         $tagged_user_notificaton['message']    = 'You are tagged by '. Auth::user()->name;
+         $tagged_user_notificaton['created_by'] = Auth::id();
+         $tagged_user_notificaton['user_id'] = $request->userId;
+         $tagged_user_notificaton->save();
+         
         // push notification
         $msg_post = [
             'notification_message' => 'A new comment is added',
             'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
         ];
+        // push notification to tagged user
+        $tagged_user_id = [$request->userId];
+        $tagged_user_post = [
+            'notification_message' => 'You are tagged in comment',
+            'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
+        ];
         $user_ids = [$notification['user_id']];
+        
         $push_notification = new PushNotificationService();
         $push_notification->send($msg_post, $user_ids);
+
+        $push_notification_to_tagged_user = new PushNotificationService();
+        $push_notification_to_tagged_user->send($tagged_user_post, $tagged_user_id);
 
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Comment added successfully');
     }

@@ -153,20 +153,16 @@
                                         } elseif ($endDate && $endDate->equalTo($currentDate)) {
                                             $label = 'Deadline Today';
                                             $deadlinePassed = false; // Assuming we want to highlight "Deadline Today" tasks separately
-                                        } 
-                                        elseif ($endDate && $endDate->equalTo($currentDate->copy()->addDay())) {
+                                        } elseif ($endDate && $endDate->equalTo($currentDate->copy()->addDay())) {
                                             $label = 'Deadline Tomorrow';
                                             $deadlinePassed = false; // Highlight "Deadline Tomorrow" tasks separately if needed
-                                        }
-                                        elseif ($endDate && $currentDate->diffInDays($endDate) <= 7) {
+                                        } elseif ($endDate && $currentDate->diffInDays($endDate) <= 7) {
                                             $label = 'Deadline This Week'; // Tasks with deadline within a week
                                             $deadlinePassed = false;
-                                        } 
-                                        else {
+                                        } else {
                                             $label = 'Performance N/D';
                                             $deadlinePassed = true;
                                         }
-
                                     @endphp
                                     <tr class="{{ $deadlinePassed ? '' : 'bg-danger' }}">
                                         <td>
@@ -235,16 +231,12 @@
     <script>
         $(document).ready(function() {
 
-            // $('#tasksTable').DataTable({
-            //     "order": [], // Disable initial sorting
-            //     "paging": false,
-            //     "info": false
-            // });
+          
 
             var table = $('#tasksTable').DataTable({
-                "order": [
-                    [0, "desc"]
-                ]
+                "order": [], // Disable initial sorting
+                "paging": false,
+                "info": false
             });
 
             // Filter for task status
@@ -281,10 +273,10 @@
             });
 
 
-            $('#departmentFilter').on('change', function(){
+            $('#departmentFilter').on('change', function() {
                 var departmentName = $('#departmentFilter').val();
                 $.ajax({
-                    url: '{{ route("users.by.department") }}',
+                    url: '{{ route('users.by.department') }}',
                     type: 'GET',
                     data: {
                         departmentName: departmentName
@@ -294,10 +286,12 @@
 
                         var usersSelect = $('#userFilter');
                         usersSelect.empty();
-                        usersSelect.append('<option value="" selected>Select User</option>'); // Add the default option
-                        
+                        usersSelect.append(
+                        '<option value="" selected>Select User</option>'); // Add the default option
+
                         $.each(response.users, function(key, value) {
-                            usersSelect.append('<option value="' + value + '">' + value + '</option>');
+                            usersSelect.append('<option value="' + value + '">' +
+                                value + '</option>');
                         });
                     },
                     error: function(xhr, status, error) {

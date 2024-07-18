@@ -57,6 +57,7 @@ Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('u
 Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
 Route::get('users/users_by_role', [UserController::class, 'users_by_role'])->name('users.by.role');
 Route::get('users/department', [UserController::class, 'users_by_department'])->name('users.by.department');
+Route::post('filter_by_date', [UserController::class, 'filter_by_date'])->name('users.by.filter_by_date');
 
 // User Profile Routes
 Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');
