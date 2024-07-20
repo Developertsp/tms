@@ -197,7 +197,6 @@ class TaskController extends Controller
             'task_id' => 'required',
             'status' => 'required',
         ]);
-
         // Find the task and store the old status
         $task = Task::find($request->task_id);
         $old_status = $task->status;
@@ -218,6 +217,28 @@ class TaskController extends Controller
 
         if($request->status == config('constants.TASK_STATUS')['Revision']){
             $task['revisions'] = $task->revisions + 1;
+
+            // if revised then send notification to user
+            $notification = new Notification();
+
+            $notification['task_id']    = $request->task_id;
+            $notification['title']      = 'Task Revised';
+            $notification['message']    = 'You task is revised to you by ' . Auth::user()->name;
+            $notification['user_id']    = $request->assign_to[0];
+            $notification['created_by'] = Auth::id();
+
+            $notification->save();
+
+            // push notification
+            $msg_post = [
+                'notification_message' => 'You task is revised to you by ' . Auth::user()->name,
+                'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
+            ];
+            $user_ids = [$notification['user_id']];
+            $push_notification = new PushNotificationService();
+            $push_notification->send($msg_post, $user_ids);
+
+
         }
 
         $task_response = $task->save();

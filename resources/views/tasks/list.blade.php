@@ -94,13 +94,14 @@
                                     <th>Priority</th>
                                     <th>Status</th>
                                     <th>Assign To</th>
+                                    <th>Due Date</th>
                                     <th>Project</th>
                                     <th>Title</th>
                                     @if (!$department_id)
                                         <th>Department</th>
                                     @endif
                                     <th>Assigned By</th>
-                                    <th>Due Date</th>
+                                  
                                     <th>Performance</th>
                                     @can('delete-tasks')
                                         <th>Action</th>
@@ -190,15 +191,16 @@
                                                 @endif
                                             @endforeach
                                         </td>
+                                        <td>{{ format_date($task->end_date) }}
+                                            {{-- {{ $task->end_date ?? 'N/D' }} --}}
+                                            , Days({{ $daysLabel ?? '' }})</td>
                                         <td>{{ $task->project->name ?? null }}</td>
                                         <td>{{ $task->title }}</td>
                                         @if (!$department_id)
                                             <td>{{ $task->department->name ?? null }}</td>
                                         @endif
                                         <td>{{ $task->creator->name }}</td>
-                                        <td>{{ format_date($task->end_date) }}
-                                            {{-- {{ $task->end_date ?? 'N/D' }} --}}
-                                            , Days({{ $daysLabel ?? '' }})</td>
+                                       
                                         <td>{{ $label ?? 'Deadline N/D' }}</td>
 
                                         @can('delete-tasks')
