@@ -19,6 +19,7 @@ use App\Http\Controllers\TaskTimeTrackingController;
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Controllers\JdTaskController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\NoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,7 @@ Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('t
 
 // Task Comments
 Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
+Route::post('comments/store/images', [CommentController::class, 'store_images'])->name('comments.store.images');
 
 // Task Attachments
 Route::post('attachments/store', [AttachmentController::class, 'store'])->name('attachments.store');
@@ -132,6 +134,9 @@ Route::delete('jd/destroy/{id}', [JdTaskController::class, 'destroy'])->name('jd
 Route::get('cronJobDaily', [CronJobController::class, 'cronJobDaily']);
 Route::get('cronJobWeekly', [CronJobController::class, 'cronJobWeekly']);
 Route::get('cronJobMonthly', [CronJobController::class, 'cronJobMonthly']);
+
+// Notes
+Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {

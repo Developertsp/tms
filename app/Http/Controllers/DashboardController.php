@@ -29,7 +29,8 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $scope = $user->scope;
-
+        $notes = $user->notes;
+      
         $CONSTANTS = config('constants')['DESIGNATION_SCOPE'];
 
         switch ($scope) {
@@ -49,6 +50,7 @@ class DashboardController extends Controller
                 break;
         }
         $data['stats'] = $response;
+        $data['notes'] = $notes;
 
         if (system_role()) {
             $data['companies'] = Company::where('is_enable', 1)->count();

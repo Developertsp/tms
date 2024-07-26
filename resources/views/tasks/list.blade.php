@@ -101,7 +101,7 @@
                                         <th>Department</th>
                                     @endif
                                     <th>Assigned By</th>
-                                  
+
                                     <th>Performance</th>
                                     @can('delete-tasks')
                                         <th>Action</th>
@@ -149,7 +149,7 @@
                                             $label = 'Deadline Missed';
                                             $deadlinePassed = false;
                                         } elseif ($task->closed_date && $task->closed_date <= $task->end_date) {
-                                            $label = 'Deadline Acheived';
+                                            $label = 'Deadline Achieved';
                                             $deadlinePassed = true;
                                         } elseif ($endDate && $endDate->equalTo($currentDate)) {
                                             $label = 'Deadline Today';
@@ -200,7 +200,7 @@
                                             <td>{{ $task->department->name ?? null }}</td>
                                         @endif
                                         <td>{{ $task->creator->name }}</td>
-                                       
+
                                         <td>{{ $label ?? 'Deadline N/D' }}</td>
 
                                         @can('delete-tasks')
@@ -233,7 +233,7 @@
     <script>
         $(document).ready(function() {
 
-          
+
 
             var table = $('#tasksTable').DataTable({
                 "order": [], // Disable initial sorting
@@ -289,7 +289,8 @@
                         var usersSelect = $('#userFilter');
                         usersSelect.empty();
                         usersSelect.append(
-                        '<option value="" selected>Select User</option>'); // Add the default option
+                            '<option value="" selected>Select User</option>'
+                            ); // Add the default option
 
                         $.each(response.users, function(key, value) {
                             usersSelect.append('<option value="' + value + '">' +
