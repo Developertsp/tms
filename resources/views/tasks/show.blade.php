@@ -10,7 +10,6 @@
             border-radius: 10px;
             font-weight: bold;
             padding: 20px;
-            z-index: 99;
 
         }
 
@@ -21,13 +20,6 @@
             margin-top: 0px;
             margin-bottom: 0px;
             cursor: pointer;
-        }
-        .input-group-append{
-            margin-left: 20px;
-            border-radius: 10px
-        }
-        .input-group > .input-group-append > .btn, .input-group > .input-group-append > .input-group-text, .input-group > .input-group-prepend:not(:first-child) > .btn, .input-group > .input-group-prepend:not(:first-child) > .input-group-text, .input-group > .input-group-prepend:first-child > .btn:not(:first-child), .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child){
-            border-radius: 10px
         }
     </style>
     <div class="row">
@@ -60,7 +52,6 @@
                     </a>
                 </div>
                 <hr>
-
                 @foreach ($task->attachments as $attachment)
                     <h6> <a href="{{ asset('storage/tasks_file/' . $attachment->path) }}"
                             target="_blank">{{ $attachment->file_name }} <i class="fas fa-eye"></i> </a> <span
@@ -73,43 +64,26 @@
                 </div>
                 <hr>
                 @foreach ($task->comments as $comment)
-                <div>
-                    <h6>{{ $comment->user->name }} <span class="float-end">{{ $comment->formatted_created_at }}</span></h6>
-                    <p>{{ $comment->comment }}</p>
-            
-                    @if ($comment->comment_images && $comment->comment_images->path)
-                        <div>
-                            <img style="object-fit: contain;border-radius:10px" height="100px" src="{{ asset('storage/comment_images/' . $comment->comment_images->path) }}" alt="{{ $comment->comment_images->path }}" class="img-fluid mt-2">
-                        </div>
-                    @endif
-            
-                    <hr style="border-top: dashed 1px;" />
-                </div>
-            @endforeach
-            
+                    <div>
+                        <h6>{{ $comment->user->name }} <span class="float-end">{{ $comment->formatted_created_at }}</span>
+                        </h6>
+                        <p>{{ $comment->comment }}</p>
+                        <hr style="border-top: dashed 1px;" />
+                    </div>
+                @endforeach
 
-                <form action="{{ route('comments.store') }}" method="post" enctype="multipart/form-data"
-                    id="comment_form">
+                <form action="{{ route('comments.store') }}" method="post" id="comment_form">
                     @csrf
                     <input type="hidden" name="task_id" id="task_id" value="{{ $task->id }}">
-                    <input type="text" hidden name="userId" id="userId" value="">
-                    <div class="input-group mb-3">
-                        <textarea class="form-control" name="comment" placeholder="Write comment here" id="comment" required></textarea>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-secondary" data-toggle="modal"
-                                data-target="#comment_images">
-                                <i class="fas fa-camera"></i>
-                            </button>
-                        </div>
+                    <input type="text" name="userId" id="userId" value="">
+                    <div class="mb-3">
+                        <textarea class="form-control" name="comment" placeholder="Write comment here" id="comment" required=""></textarea>
                     </div>
                     <div id="tagged-users"></div> <!-- Hidden fields for tagged user IDs -->
                     <div class="float-right">
-                        <button type="submit" class="btn btn-primary w-md">Submit</button>
+                        <button type="submit" class="btn btn-primary w-md ">Submit</button>
                     </div>
                 </form>
-
-
-
 
             </div>
         </div>
@@ -272,48 +246,6 @@
         </div>
     </div>
     <!-- /.modal -->
-    <!-- Modal for Comment Images -->
-    <div class="modal fade" id="comment_images" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="status_modalLabel">Add Image and Comment</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="comment_text">Comment</label>
-                                <textarea class="form-control" name="comment" id="comment_text" rows="3" required>Type Here...</textarea>
-                            </div>
-                            <form action="{{ route('comments.store.images') }}" method="post"
-                                enctype="multipart/form-data" class="dropzone" id="comment-file-dropzone">
-                                @csrf
-                                <input type="hidden" name="task_id" value="{{ $task->id }}">
-                              
-                                <div class="dropzone-previews" id="dropzonePreview"></div>
-                            </form>
-                            <p>Max file size is 10mb.</p>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary rounded py-1"
-                                    data-dismiss="modal">Close</button>
-                                <button id="upload-comment-image-button"
-                                    class="btn btn-primary rounded py-1">Upload</button>
-                            </div>
-                        </div> <!-- end card-body-->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /.modal -->
-
-
-
-
 
     <!-- Modal for details Change -->
     <div class="modal fade" id="details_modal" tabindex="-1" role="dialog" aria-labelledby="status_modalLabel"
@@ -638,45 +570,41 @@
     <script src="https://cdn.jsdelivr.net/npm/tributejs@5.1.3/dist/tribute.js"></script>
 
     <script>
-        var users = @json($users);
+      document.addEventListener('DOMContentLoaded', function() {
+    var tribute = new Tribute({
+        values: [
+            @foreach ($users as $user)
+                {
+                    key: "{{ $user->name }}",
+                    value: "{{ $user->id }}"
+                },
+            @endforeach
+        ],
+        selectTemplate: function(item) {
+            var userIdInput = document.getElementById('userId');
+            var existingValue = userIdInput.value;
+            userIdInput.value = existingValue ? existingValue + ',' + item.original.value : item.original.value;
+            return '@' + item.original.key;
+        }
+    });
 
-        document.addEventListener('DOMContentLoaded', function() {
+    tribute.attach(document.getElementById('comment'));
 
-            var tribute = new Tribute({
-                values: [
-                    @foreach ($users as $user)
-                        {
-                            key: "{{ $user->name }}",
-                            value: "{{ $user->id }}"
-                        },
-                    @endforeach
-                ],
-                selectTemplate: function(item) {
-                    var userIdInput = document.getElementById('userId');
-                    var existingValue = userIdInput.value;
-                    userIdInput.value = existingValue ? existingValue + ',' + item.original.value : item
-                        .original.value;
-                    return  item.original.key;
-                }
-            });
+    document.getElementById('comment_form').addEventListener('submit', function(event) {
+        var commentInput = document.getElementById('comment');
+        var taggedUsersInput = document.getElementById('tagged-users');
+        var mentionedUsers = tribute.collection[0].values;
 
-            tribute.attach(document.getElementById('comment'));
-
-            document.getElementById('comment_form').addEventListener('submit', function(event) {
-                var commentInput = document.getElementById('comment');
-                var taggedUsersInput = document.getElementById('tagged-users');
-                var mentionedUsers = tribute.collection[0].values;
-
-                taggedUsersInput.innerHTML = '';
-                mentionedUsers.forEach(function(user) {
-                    var hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'tagged_users[]';
-                    hiddenInput.value = user.value;
-                    taggedUsersInput.appendChild(hiddenInput);
-                });
-            });
+        taggedUsersInput.innerHTML = '';
+        mentionedUsers.forEach(function(user) {
+            var hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'tagged_users[]';
+            hiddenInput.value = user.value;
+            taggedUsersInput.appendChild(hiddenInput);
         });
+    });
+});
 
         Dropzone.options.fileDropzone = {
             autoProcessQueue: false,
@@ -710,46 +638,6 @@
                 });
             }
         };
-        Dropzone.options.commentFileDropzone = {
-            autoProcessQueue: false,
-            maxFilesize: 10, // MB
-            parallelUploads: 10,
-            addRemoveLinks: true,
-            dictRemoveFile: 'Remove',
-            previewsContainer: "#dropzonePreview",
-            init: function() {
-                var submitButton = document.querySelector("#upload-comment-image-button");
-                var myDropzone = this;
-
-                submitButton.addEventListener("click", function() {
-                    // Append comment to the form data
-                    var comment = document.querySelector("#comment_text").value;
-                    myDropzone.options.params = {
-                        comment: comment
-                    };
-
-                    myDropzone.processQueue();
-                });
-
-                this.on("success", function(file, response) {
-                    console.log(response);
-                    // Handle the response if needed
-                });
-
-                this.on("queuecomplete", function() {
-                    console.log("All files have been uploaded successfully.");
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000); // Delay of 1 second
-                });
-
-                this.on("removedfile", function(file) {
-                    console.log('File removed:', file);
-                    // Handle file removal if necessary
-                });
-            }
-        };
-
 
         $('#time').on('input', function() {
             var totalMinutes = $(this).val();

@@ -559,11 +559,6 @@
                 }
             });
         }
-
-        
     });
-    
-        
 </script>
-
 @endsection

@@ -31,9 +31,4 @@ class Comment extends Model
     {
         return \Carbon\Carbon::parse($this->attributes['created_at'])->format('d-m-Y h:i A');
     }
-
-    public function comment_images()
-    {
-        return $this->hasOne(CommentImage::class);
-    }
 }

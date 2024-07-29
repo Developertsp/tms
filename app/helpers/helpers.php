@@ -1,8 +1,4 @@
 <?php
-
-use Illuminate\Support\Facades\Http;
-use Google\Client as GoogleClient;
-
 function table_date($datetime)
 {
     $date = DateTime::createFromFormat('Y-m-d\TH:i:s.u\Z', $datetime);
@@ -38,6 +34,8 @@ function filter_company_id($name)
     return ucfirst($transformedName);
 }
 
+
+
 function format_date($datetime)
 {
     $formats = [
@@ -56,7 +54,6 @@ function format_date($datetime)
 
     return 'Invalid datetime';
 }
-
 function format_date_with_time($datetime)
 {
     $formats = [
@@ -76,38 +73,3 @@ function format_date_with_time($datetime)
     return 'Invalid datetime';
 }
 
-function sendNotification($fcmToken, $title, $body)
-{
-    $url = 'https://fcm.googleapis.com/v1/projects/notification-3804c/messages:send'; // Replace with your project ID
-    $serviceAccountPath = public_path('notification-3804c-b91a8fe40ad0.json'); // Path to your service account JSON file
-    // return $serviceAccountPath;
-
-    $client = new GoogleClient();
-    $client->setAuthConfig($serviceAccountPath);
-    $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-
-    $token = $client->fetchAccessTokenWithAssertion()['access_token'];
-
-    $message = [
-        'message' => [
-            'token' => $fcmToken,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-        ],
-    ];
-
-    $headers = [
-        'Authorization' => 'Bearer ' . $token,
-        'Content-Type' => 'application/json',
-    ];
-
-    $response = Http::withHeaders($headers)->post($url, $message);
-
-    if ($response->successful()) {
-        return ['status' => 'success', 'message' => 'Notification sent successfully', 'response' => $response->json()];
-    } else {
-        return ['status' => 'error', 'message' => 'Notification failed', 'response' => $response->json()];
-    }
-}

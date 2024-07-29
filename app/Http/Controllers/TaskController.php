@@ -60,8 +60,6 @@ class TaskController extends Controller
         }
 
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-
-    //  return $data;
         return view('tasks.list', $data);
     }
 
@@ -71,7 +69,7 @@ class TaskController extends Controller
         $department_id = $user->department_id;
 
         $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.comment_images','comments.user', 'logs.user', 'tracking.user')->find($task_id);
+        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
         // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
@@ -188,8 +186,6 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Task Notification', 'New task is assigned to you.');
         }
 
         return redirect()->route('tasks.list')->with('success', 'Task assigned successfully');
@@ -213,11 +209,7 @@ class TaskController extends Controller
         $task['description']    = $request->description;
         $task['updated_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
-        // $task['end_date']       = $request->end_date ?? NULL;
-        if($request->end_date){
-            $task['end_date']       = $request->end_date;
-        }
-       
+        $task['end_date']       = $request->end_date ?? NULL;
 
         if($request->status == config('constants.TASK_STATUS')['Closed']){
             $task['closed_date'] = Carbon::now()->format('Y-m-d');
@@ -245,8 +237,6 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Revised Task Notification', 'You task is revised to you by ' . Auth::user()->name);
 
 
         }
@@ -295,9 +285,6 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Task Notification', 'Your task is updated to you');
         }
         // Create a log entry
         $log_data = new Log();
@@ -336,8 +323,7 @@ class TaskController extends Controller
         $user_ids = [$notification['user_id']];
         $push_notification = new PushNotificationService();
         $push_notification->send($msg_post, $user_ids);
-        $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-        sendNotification($user->fcm_token, 'Task Notification', 'Task Staus Changed');
+
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
     }
 

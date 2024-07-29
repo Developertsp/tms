@@ -19,49 +19,6 @@
                 </div>
 
                 <div class="card-body">
-                   
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div id="totalTasksCard" class="card text-white bg-primary mb-3">
-                                <div class="card-header">
-                                    <i class="fas fa-tasks"></i> Total Tasks
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $totalTasks }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div id="completedTasksCard" class="card text-white bg-success mb-3">
-                                <div class="card-header">
-                                    <i class="fas fa-check-circle"></i> Completed Tasks
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $completedTasks }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div id="missedTasksCard" class="card text-white bg-danger mb-3">
-                                <div class="card-header">
-                                    <i class="fas fa-times-circle"></i> Missed Tasks
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $missedTasks }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div id="assignedTasksCard" class="card text-white bg-warning mb-3">
-                                <div class="card-header">
-                                    <i class="fas fa-clipboard-list"></i> Assigned Tasks
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $assignedTasks }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="row">
                         @if (!$department_id)
                             <div class="col-lg-2 col-md-6 col-sm-12">
@@ -119,6 +76,48 @@
                             <div class="form-group fill">
                                 <label for="statusFilter">Date Range Filter:</label>
                                 <input type="text" id="dateRangeFilter" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div id="totalTasksCard" class="card text-white bg-primary mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-tasks"></i> Total Tasks
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $totalTasks }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="completedTasksCard" class="card text-white bg-success mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-check-circle"></i> Completed Tasks
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $completedTasks }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="missedTasksCard" class="card text-white bg-danger mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-times-circle"></i> Missed Tasks
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $missedTasks }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="assignedTasksCard" class="card text-white bg-warning mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-clipboard-list"></i> Assigned Tasks
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-white" style="font-size: 1.5rem;">{{ $assignedTasks }}</h5>
+                                </div>
                             </div>
                         </div>
                     </div>

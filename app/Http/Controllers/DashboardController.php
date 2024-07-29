@@ -29,6 +29,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $scope = $user->scope;
+<<<<<<< HEAD
         $user->load('roles.permissions');
         
 
@@ -42,6 +43,9 @@ class DashboardController extends Controller
         // return $rolesWithPermissions;
         $notes = $user->notes;
       
+=======
+
+>>>>>>> parent of 4b8c7e4 (notification updated)
         $CONSTANTS = config('constants')['DESIGNATION_SCOPE'];
 
         switch ($scope) {
@@ -61,7 +65,6 @@ class DashboardController extends Controller
                 break;
         }
         $data['stats'] = $response;
-        $data['notes'] = $notes;
 
         if (system_role()) {
             $data['companies'] = Company::where('is_enable', 1)->count();

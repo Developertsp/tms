@@ -75,9 +75,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(ForgetPasswordOtp::class);
     }
-
-    public function notes()
-    {
-        return $this->hasMany(Note::class, 'created_by');
-    }
 }
