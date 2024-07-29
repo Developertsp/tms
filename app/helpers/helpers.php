@@ -78,28 +78,19 @@ function format_date_with_time($datetime)
 
 function sendNotification($fcmToken, $title, $body)
 {
-    $url = 'https://fcm.googleapis.com/v1/projects/notification-3804c/messages:send'; // Replace with your project ID
-    $serviceAccountPath = public_path('notification-3804c-b91a8fe40ad0.json'); // Path to your service account JSON file
-    // return $serviceAccountPath;
-
-    $client = new GoogleClient();
-    $client->setAuthConfig($serviceAccountPath);
-    $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-
-    $token = $client->fetchAccessTokenWithAssertion()['access_token'];
+    $url = 'https://fcm.googleapis.com/fcm/send';
+    $serverKey = 'AAAALuG3n_I:APA91bG3or4GSBHkVMykGE11rD65ilFHQMtkfXikyfvhfpbTXdG0xXmb4IMg2JyMfQZA8jt8vfEEmg1zOVlW1nKmbaHKue5zywgZ7oX10Fpp9QUM9PqXjmQjB_Bf6pinSfMOSnrqs-bq'; // Replace with your Firebase server key
 
     $message = [
-        'message' => [
-            'token' => $fcmToken,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
+        'to' => $fcmToken,
+        'notification' => [
+            'title' => $title,
+            'body' => $body,
         ],
     ];
 
     $headers = [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'key=' . $serverKey,
         'Content-Type' => 'application/json',
     ];
 

@@ -37,7 +37,7 @@ class TaskController extends Controller
     {
         $user = Auth::user();
         $department_id = $user->department_id;
-        $data['department_id'] = $department_id; 
+        $data['department_id'] = $department_id;
         if ($department_id) {
             if ($user->scope == 2) {
                 $data['tasks'] = Task::where('is_enable', 1)->where('department_id', $department_id)->with('project', 'department', 'users', 'creator')->orderBy('id', 'desc')->get();
@@ -61,7 +61,7 @@ class TaskController extends Controller
 
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
-    //  return $data;
+        //  return $data;
         return view('tasks.list', $data);
     }
 
@@ -71,7 +71,7 @@ class TaskController extends Controller
         $department_id = $user->department_id;
 
         $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.comment_images','comments.user', 'logs.user', 'tracking.user')->find($task_id);
+        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.comment_images', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
         // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
@@ -95,9 +95,9 @@ class TaskController extends Controller
     public function create()
     {
         $user = Auth::user();
-   
+
         $department_id = $user->department_id;
-        
+
 
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['status']     = config('constants.STATUS_LIST');
@@ -188,8 +188,11 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Task Notification', 'New task is assigned to you.');
+            $user = User::where('id', $notification['user_id'])->select('fcm_token')->first();
+            try {
+                sendNotification($user->fcm_token, 'Task Notification', 'New task is assigned to you.');
+            } catch (\Exception $e) {
+            }
         }
 
         return redirect()->route('tasks.list')->with('success', 'Task assigned successfully');
@@ -214,16 +217,16 @@ class TaskController extends Controller
         $task['updated_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
         // $task['end_date']       = $request->end_date ?? NULL;
-        if($request->end_date){
+        if ($request->end_date) {
             $task['end_date']       = $request->end_date;
         }
-       
 
-        if($request->status == config('constants.TASK_STATUS')['Closed']){
+
+        if ($request->status == config('constants.TASK_STATUS')['Closed']) {
             $task['closed_date'] = Carbon::now()->format('Y-m-d');
         }
 
-        if($request->status == config('constants.TASK_STATUS')['Revision']){
+        if ($request->status == config('constants.TASK_STATUS')['Revision']) {
             $task['revisions'] = $task->revisions + 1;
 
             // if revised then send notification to user
@@ -245,10 +248,14 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Revised Task Notification', 'You task is revised to you by ' . Auth::user()->name);
+            $user = User::where('id', $notification['user_id'])->select('fcm_token')->first();
+            try{
+                sendNotification($user->fcm_token, 'Revised Task Notification', 'You task is revised to you by ' . Auth::user()->name);
+            }
+            catch(\Exception $e){
 
-
+            }
+           
         }
 
         $task_response = $task->save();
@@ -296,8 +303,14 @@ class TaskController extends Controller
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
 
-            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'Task Notification', 'Your task is updated to you');
+            $user = User::where('id', $notification['user_id'])->select('fcm_token')->first();
+            try{
+                sendNotification($user->fcm_token, 'Task Notification', 'Your task is updated to you');
+            }
+            catch(\Exception $e){
+
+            }
+            
         }
         // Create a log entry
         $log_data = new Log();
@@ -336,8 +349,13 @@ class TaskController extends Controller
         $user_ids = [$notification['user_id']];
         $push_notification = new PushNotificationService();
         $push_notification->send($msg_post, $user_ids);
-        $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-        sendNotification($user->fcm_token, 'Task Notification', 'Task Staus Changed');
+        $user = User::where('id', $notification['user_id'])->select('fcm_token')->first();
+        try{
+            sendNotification($user->fcm_token, 'Task Notification', 'Task Staus Changed');
+        }
+        catch(\Exception $e){
+            
+        }
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
     }
 
@@ -382,11 +400,11 @@ class TaskController extends Controller
             ->with('project', 'department', 'users', 'creator')
             ->orderBy('id', 'desc');
 
-        if(Auth::user()->scope == 2){
+        if (Auth::user()->scope == 2) {
             $query->where('department_id', Auth::user()->department_id);
         }
 
-        if(Auth::user()->scope == 3){
+        if (Auth::user()->scope == 3) {
             $query->whereHas('users', function ($query) {
                 $query->where('user_id', Auth::user()->id);
             });
@@ -431,7 +449,7 @@ class TaskController extends Controller
         if ($request->filled('performance')) {
             $performance = $request->performance;
             $todayDate = Carbon::today()->format('Y-m-d');
-            
+
             if ($performance === 'D_Missed') {
                 $query->where(function ($query) use ($todayDate) {
                     $query->where(function ($query) {
@@ -442,9 +460,7 @@ class TaskController extends Controller
                             ->whereNull('closed_date');
                     });
                 });
-
-            }
-            elseif ($performance === 'D_Achieved') {
+            } elseif ($performance === 'D_Achieved') {
                 $query->whereNotNull('end_date')
                     ->whereColumn('closed_date', '<=', 'end_Date')
                     ->where('status', 3);
@@ -461,13 +477,12 @@ class TaskController extends Controller
     {
         $task = Task::find($request->task_id);
 
-        if($task->end_date){
+        if ($task->end_date) {
             $this->validate($request, [
                 'end_date' => 'required',
                 'reason' => 'required',
             ]);
-        }
-        else{
+        } else {
             $this->validate($request, [
                 'end_date' => 'required',
             ]);

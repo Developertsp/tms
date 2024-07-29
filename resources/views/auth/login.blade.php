@@ -79,7 +79,7 @@
                                             </label>
                                         </div>
                                         <!-- Hidden input for Firebase token -->
-                                        <input hidden type="text" id="firebase-token" name="fcm_token" value="">
+                                        <input hidden  type="text" id="firebase-token" name="fcm_token" value="">
                                         <div class="text-center mt-3">
                                             <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
                                         </div>
@@ -119,30 +119,29 @@
             appId: "1:201355403250:web:1d9bcb3904843fa9d0156b",
             measurementId: "G-6YYXRPRGG9"
         };
-
+    
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
-
+    
         function startFCM() {
-            messaging
-                .requestPermission()
-                .then(function () {
+            messaging.requestPermission()
+                .then(function() {
                     console.log('Notification permission granted.');
                     return messaging.getToken();
                 })
-                .then(function (token) {
+                .then(function(token) {
                     console.log('Firebase Token:', token);
                     // Set the token in the hidden input field
                     document.getElementById('firebase-token').value = token;
                 })
-                .catch(function (error) {
-                    console.log('Error getting permission:', error);
-                    alert(error);
+                .catch(function(error) {
+                    console.error('Error getting permission or token:', error);
+                    alert('Unable to get Firebase token: ' + error.message);
                 });
         }
-
-        messaging.onMessage(function (payload) {
+    
+        messaging.onMessage(function(payload) {
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
@@ -150,21 +149,22 @@
             };
             new Notification(title, options);
         });
-
-        // Register service worker
+    
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(function (registration) {
+                .then(function(registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
                     messaging.useServiceWorker(registration);
                     startFCM();
                 })
-                .catch(function (error) {
-                    console.log('Service Worker registration failed:', error);
+                .catch(function(error) {
+                    console.error('Service Worker registration failed:', error);
                 });
         } else {
-            console.log('Service Worker not supported in this browser.');
+            console.error('Service Worker not supported in this browser.');
         }
     </script>
+    
 
 </body>
 

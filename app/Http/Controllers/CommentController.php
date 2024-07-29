@@ -47,7 +47,13 @@ class CommentController extends Controller
         }
 
         $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
-        sendNotification($user->fcm_token, 'New Comment', 'A new comment is added by ' . Auth::user()->name);
+        try{
+            sendNotification($user->fcm_token, 'New Comment', 'A new comment is added by ' . Auth::user()->name);
+        }
+        catch(\Exception $e){
+
+        }
+        
         $notification->save();
 
         // Notification for tagged user
@@ -71,7 +77,13 @@ class CommentController extends Controller
             $push_notification_to_tagged_user = new PushNotificationService();
             $push_notification_to_tagged_user->send($tagged_user_post, $tagged_user_id);
             $user = User::where('id',$tagged_user_notificaton['user_id'])->select('fcm_token')->first();
-            sendNotification($user->fcm_token, 'New Comment', 'You are tagged by ' . Auth::user()->name);
+            try{
+                sendNotification($user->fcm_token, 'New Comment', 'You are tagged by ' . Auth::user()->name);
+            }
+            catch(\Exception $e){
+
+            }
+            
         }
 
 
