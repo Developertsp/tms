@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Mail\UserWelcomeMail;
 use Illuminate\Http\Request;
+=======
+use App\Models\Department;
+use Illuminate\Http\Request;
+use App\Models\User;
+>>>>>>> f822cf6 (updation in the)
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
+<<<<<<< HEAD
 //models
 use App\Models\User;
 use App\Models\Department;
@@ -18,21 +25,31 @@ use App\Models\Task;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
+=======
+>>>>>>> f822cf6 (updation in the)
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
 
+<<<<<<< HEAD
         $this->middleware('permission:view-users|create-users|update-users|delete-users', ['only' => ['index', 'store']]);
         $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
         $this->middleware('permission:update-users', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-users', ['only' => ['destroy']]);
         parent::__construct();
+=======
+        $this->middleware('permission:view-users|create-users|update-users|delete-users', ['only' => ['index','store']]);
+        $this->middleware('permission:create-users', ['only' => ['create','store']]);
+        $this->middleware('permission:update-users', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-users', ['only' => ['destroy']]);
+>>>>>>> f822cf6 (updation in the)
     }
 
     public function index()
     {
+<<<<<<< HEAD
         if (system_role()) {
             $data['users'] = User::with('company')->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
             $data['companies'] = Company::where('is_enable', 1)->pluck('name', 'id')->all();
@@ -41,11 +58,16 @@ class UserController extends Controller
             $data['users'] = $department_id ? User::with('department')->where('department_id', $department_id)->where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get() : User::with('department')->where('company_id', user_company_id())->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
         }
 
+=======
+        $department_id = Auth::user()->department_id;
+        $data['users'] = $department_id ? User::where('department_id', $department_id)->get() : User::get();
+>>>>>>> f822cf6 (updation in the)
         return view('users.list', $data);
     }
 
     public function create()
     {
+<<<<<<< HEAD
         $data['user'] = Auth::user();
         if (system_role()) {
             $data['roles'] = Role::whereNull('company_id')->orderBy('id')->skip(1)->take(PHP_INT_MAX)->get();
@@ -53,12 +75,16 @@ class UserController extends Controller
         } else {
             $data['roles'] = Role::where('company_id', user_company_id())->orderBy('id')->get();
         }
+=======
+        $data['roles'] = Role::get();
+>>>>>>> f822cf6 (updation in the)
         $data['departments'] = Department::where('is_enable', 1)->get();
         return view('users.create', $data);
     }
 
     public function store(Request $request)
     {
+<<<<<<< HEAD
         // Validate the request data
         $this->validate($request, [
             'name'          => 'required',
@@ -70,24 +96,47 @@ class UserController extends Controller
             'profile_pic'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'joining_date'  => 'nullable|date_format:Y-m-d',
             'expiry_date'   => 'nullable|date_format:Y-m-d',
+=======
+        // check for spatie role id instead of name
+        $this->validate($request, [
+            'name'          => 'required|alpha_space',
+            'roles'         => 'required',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required',
+            'profile_pic'   => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'joining_date'  => 'nullable|date_format:Y-m-d',
+            'expiry_date'   => 'nullable|date_format:Y-m-d',
+            // 'start_time'    => 'nullable|date_format:H:i',
+            // 'end_time'      => 'nullable|date_format:H:i',
+>>>>>>> f822cf6 (updation in the)
             'phone'         => 'nullable|numeric',
             'whatsapp'      => 'nullable|numeric',
         ]);
 
+<<<<<<< HEAD
         // Handle the profile picture file upload
         if ($request->hasFile('profile_pic')) {
+=======
+        if($request->hasFile('profile_pic')){
+>>>>>>> f822cf6 (updation in the)
             $image = $request->file('profile_pic');
             $image_name = time() . '_' . uniqid('', true) . '.' . $image->getClientOriginalExtension();
             $org_name = $image->getClientOriginalName();
             $request->file('profile_pic')->storeAs('public/profile_pics/', $image_name);
         }
 
+<<<<<<< HEAD
         // Create a new user instance
         $user = new User();
         $user->name         = $request->name;
         $user->email        = $request->email;
         $user->scope        = $request->scope;
         $user->company_id   = $request->company_id;
+=======
+        $user = new User();
+        $user->name         = $request->name;
+        $user->email        = $request->email;
+>>>>>>> f822cf6 (updation in the)
         $user->password     = Hash::make($request->password);
         $user->joining_date = $request->joining_date;
         $user->expiry_date  = $request->expiry_date;
@@ -98,6 +147,7 @@ class UserController extends Controller
         $user->created_by   = Auth::id();
         $user->department_id = $request->department ?? NULL;
 
+<<<<<<< HEAD
         if ($request->hasFile('profile_pic')) {
             $user->profile_pic = $image_name;
         }
@@ -116,10 +166,21 @@ class UserController extends Controller
         } else {
             return redirect()->back()->with('error', 'User was not created.');
         }
+=======
+        if($request->hasFile('profile_pic')){
+            $user->profile_pic = $image_name;
+        }
+
+        $response = $user->save();
+        $user->assignRole($request->roles);
+    
+        return redirect()->route('users.list')->with('success','User created successfully');
+>>>>>>> f822cf6 (updation in the)
     }
 
     public function edit($id)
     {
+<<<<<<< HEAD
         $data['user'] = User::with('company:id,name')->find($id);
         if (system_role()) {
             $data['user_role'] = $data['user']->roles->pluck('name', 'name')->all();
@@ -128,6 +189,11 @@ class UserController extends Controller
         } else {
             $data['roles'] = Role::where('company_id', user_company_id())->orderBy('id')->get();
         }
+=======
+        $data['user'] = User::find($id);
+        $data['user_role'] = $data['user']->roles->pluck('name','name')->all();
+        $data['roles'] = Role::get();
+>>>>>>> f822cf6 (updation in the)
         $data['departments'] = Department::where('is_enable', 1)->get();
         return view('users.edit', $data);
     }
@@ -135,6 +201,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
+<<<<<<< HEAD
             'name'          => 'required',
             'roles'         => 'required',
             'email'         => 'required|email|unique:users,email,' . $request->id,
@@ -146,15 +213,36 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('profile_pic')) {
+=======
+            'name'          => 'required|alpha_space',
+            'roles'         => 'required',
+            'email'         => 'required|email|unique:users,email,'.$request->id,
+            'profile_pic'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'joining_date'  => 'nullable|date_format:Y-m-d',
+            'expiry_date'   => 'nullable|date_format:Y-m-d',
+            // 'start_time'    => 'nullable|date_format:g:i A',
+            // 'end_time'      => 'nullable|date_format:g:i A',
+            'phone'         => 'nullable|numeric',
+            'whatsapp'      => 'nullable|numeric',
+        ]);
+    
+        if($request->hasFile('profile_pic')){
+>>>>>>> f822cf6 (updation in the)
             $image = $request->file('profile_pic');
             $image_name = time() . '_' . uniqid('', true) . '.' . $image->getClientOriginalExtension();
             $request->file('profile_pic')->storeAs('public/profile_pics/', $image_name);
         }
+<<<<<<< HEAD
 
         $post_data['name']         = $request->name;
         $post_data['email']        = $request->email;
         $post_data['company_id']   = $request->company_id;;
         $post_data['scope']        = $request->scope;;
+=======
+        
+        $post_data['name']         = $request->name;
+        $post_data['email']        = $request->email;
+>>>>>>> f822cf6 (updation in the)
         $post_data['joining_date'] = $request->joining_date;
         $post_data['expiry_date']  = $request->expiry_date;
         $post_data['start_time']   = $request->start_time;
@@ -164,11 +252,16 @@ class UserController extends Controller
         $post_data['updated_by']   = Auth::id();
         $post_data['department_id'] = $request->department ?? NULL;
 
+<<<<<<< HEAD
         if ($request->hasFile('profile_pic')) {
+=======
+        if($request->hasFile('profile_pic')){
+>>>>>>> f822cf6 (updation in the)
             $post_data['profile_pic'] = $image_name;
         }
 
 
+<<<<<<< HEAD
         if (!empty($request->password)) {
             $post_data['password'] = Hash::make($request->password);
         }
@@ -181,6 +274,20 @@ class UserController extends Controller
         $user->assignRole($request->roles);
 
         return redirect()->route('users.list')->with('success', 'User updated successfully');
+=======
+        if(!empty($request->password)){ 
+            $post_data['password'] = Hash::make($request->password);
+        }
+    
+        $user = User::find($request->id);
+        $response = $user->update($post_data);
+
+        DB::table('model_has_roles')->where('model_id',$request->id)->delete();
+    
+        $user->assignRole($request->roles);
+    
+        return redirect()->route('users.list')->with('success','User updated successfully');
+>>>>>>> f822cf6 (updation in the)
     }
 
     public function destroy($id)
@@ -205,13 +312,22 @@ class UserController extends Controller
             'phone'         => 'nullable|numeric',
             'whatsapp'      => 'nullable|numeric',
         ]);
+<<<<<<< HEAD
 
         if ($request->hasFile('profile_pic')) {
+=======
+    
+        if($request->hasFile('profile_pic')){
+>>>>>>> f822cf6 (updation in the)
             $image = $request->file('profile_pic');
             $image_name = time() . '_' . uniqid('', true) . '.' . $image->getClientOriginalExtension();
             $request->file('profile_pic')->storeAs('public/profile_pics/', $image_name);
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> f822cf6 (updation in the)
         $user_id = Auth::id();
 
         $post_data['name']         = $request->name;
@@ -219,11 +335,16 @@ class UserController extends Controller
         $post_data['whatsapp']     = $request->whatsapp;
         $post_data['updated_by']   = $user_id;
 
+<<<<<<< HEAD
         if ($request->hasFile('profile_pic')) {
+=======
+        if($request->hasFile('profile_pic')){
+>>>>>>> f822cf6 (updation in the)
             $post_data['profile_pic'] = $image_name;
         }
 
 
+<<<<<<< HEAD
         if (!empty($request->password)) {
             $post_data['password'] = Hash::make($request->password);
         }
@@ -417,5 +538,15 @@ class UserController extends Controller
         $users_list = array_column($users, 'name', 'id');
 
         return response()->json(['users' => $users_list]);
+=======
+        if(!empty($request->password)){ 
+            $post_data['password'] = Hash::make($request->password);
+        }
+    
+        $user = User::find($user_id);
+        $response = $user->update($post_data);
+    
+        return redirect()->route('users.profile')->with('success','User updated successfully');
+>>>>>>> f822cf6 (updation in the)
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 use App\Models\TaskTimeTracking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,19 @@ use App\Http\Controllers\TaskTimeTrackingController;
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Controllers\JdTaskController;
 use App\Http\Controllers\CronJobController;
+=======
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+>>>>>>> f822cf6 (updation in the)
 
 /*
 |--------------------------------------------------------------------------
@@ -35,12 +49,15 @@ use App\Http\Controllers\CronJobController;
 
     
 // });
+<<<<<<< HEAD
 Route::get('/forget_password', [LoginController::class, 'forget_password'])->name('forget_password');
 Route::post('/send_otp', [LoginController::class, 'send_otp'])->name('send_otp');
 Route::get('/verify_otp', [LoginController::class, 'verify_otp'])->name('verify_otp');
 Route::post('/verify_otp', [LoginController::class, 'verify_otp_post'])->name('verify_otp_post');
 Route::get('/password_reset_form', [LoginController::class, 'password_reset_form'])->name('password_reset_form');
 Route::post('/change_password', [LoginController::class, 'change_password'])->name('change_password');
+=======
+>>>>>>> f822cf6 (updation in the)
 
 Auth::routes();
 
@@ -54,6 +71,7 @@ Route::post('users/store', [UserController::class, 'store'])->name('users.store'
 Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+<<<<<<< HEAD
 Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
 Route::get('users/users_by_role', [UserController::class, 'users_by_role'])->name('users.by.role');
 Route::get('users/department', [UserController::class, 'users_by_department'])->name('users.by.department');
@@ -72,16 +90,25 @@ Route::post('companies/update', [CompanyController::class, 'update'])->name('com
 Route::delete('companies/destroy/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 
 
+=======
+
+Route::get('users/profile', [UserController::class, 'profile'])->name('users.profile');
+Route::post('users/profile_update', [UserController::class, 'profile_update'])->name('users.profile_update');
+
+>>>>>>> f822cf6 (updation in the)
 // Task Routes
 Route::get('tasks', [TaskController::class, 'index'])->name('tasks.list');
 Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create');
 Route::post('tasks/store', [TaskController::class, 'store'])->name('tasks.store');
 Route::get('tasks/show/{id}', [TaskController::class, 'show'])->name('tasks.show');
 Route::post('tasks/update', [TaskController::class, 'update'])->name('tasks.update');
+<<<<<<< HEAD
 Route::get('tasks/report', [TaskController::class, 'report'])->name('tasks.report');
 Route::post('tasks/export', [TaskController::class, 'export'])->name('tasks.export');
 Route::post('tasks/update_deadline', [TaskController::class, 'update_task_deadline'])->name('tasks.update.deadline');
 Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+=======
+>>>>>>> f822cf6 (updation in the)
 
 // Task Comments
 Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
@@ -89,10 +116,13 @@ Route::post('comments/store', [CommentController::class, 'store'])->name('commen
 // Task Attachments
 Route::post('attachments/store', [AttachmentController::class, 'store'])->name('attachments.store');
 
+<<<<<<< HEAD
 // Task Time Tracking
 Route::post('tracking/store', [TaskTimeTrackingController::class, 'store'])->name('tracking.store');
 
 
+=======
+>>>>>>> f822cf6 (updation in the)
 // Project Routes
 Route::get('projects', [ProjectController::class, 'index'])->name('projects.list');
 Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create');
@@ -100,9 +130,12 @@ Route::post('projects/store', [ProjectController::class, 'store'])->name('projec
 Route::get('projects/edit/{id}', [ProjectController::class, 'edit'])->name('projects.edit');
 Route::post('projects/update', [ProjectController::class, 'update'])->name('projects.update');
 Route::delete('projects/destroy/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+<<<<<<< HEAD
 Route::get('projects/show/{id}', [ProjectController::class, 'show'])->name('projects.show');
 Route::post('projects/comments/store', [ProjectCommentController::class, 'store'])->name('projects.comments.store');
 Route::post('projects/attachments/store', [ProjectAttachmentController::class, 'store'])->name('projects.attachments.store');
+=======
+>>>>>>> f822cf6 (updation in the)
 
 // Department Routes
 Route::get('departments', [DepartmentController::class, 'index'])->name('departments.list');
@@ -117,6 +150,7 @@ Route::get('notifications/read/{id}', [NotificationController::class, 'read'])->
 Route::post('notifications/read_all/', [NotificationController::class, 'read_all'])->name('notifications.read_all');
 Route::get('notifications/list', [NotificationController::class, 'list'])->name('notifications.list');
 
+<<<<<<< HEAD
 // dashboard filter
 Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
@@ -132,6 +166,8 @@ Route::delete('jd/destroy/{id}', [JdTaskController::class, 'destroy'])->name('jd
 Route::get('cronJobDaily', [CronJobController::class, 'cronJobDaily']);
 Route::get('cronJobWeekly', [CronJobController::class, 'cronJobWeekly']);
 Route::get('cronJobMonthly', [CronJobController::class, 'cronJobMonthly']);
+=======
+>>>>>>> f822cf6 (updation in the)
 
 // Temporary Routes Goes Here
 Route::get('/assign-task', function () {

@@ -1,7 +1,10 @@
 /.phpunit.cache
 /node_modules
 /public/build
+<<<<<<< HEAD
 /public/notification-3804c-b91a8fe40ad0.json
+=======
+>>>>>>> f822cf6 (updation in the)
 /public/hot
 /public/storage
 /storage/*.key

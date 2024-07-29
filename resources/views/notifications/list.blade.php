@@ -1,7 +1,10 @@
 @extends('layout.app')
 @section('title', 'Notifications List | TSP - Task Management System')
 @section('pageTitle', 'Notifications List')
+<<<<<<< HEAD
 @section('breadcrumTitle', 'All Notifications')
+=======
+>>>>>>> f822cf6 (updation in the)
 
 @section('content')
 
@@ -9,6 +12,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+<<<<<<< HEAD
                 <div class="table-responsive">
                     <table id="notifications-datatable" class="table dt-responsive nowrap w-100">
                         <thead>
@@ -50,6 +54,24 @@
                         </tbody>
                     </table>
                 </div>
+=======
+                <table id="notifications-datatable" class="table dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($notifications as $notification)
+                            <tr>
+                                <td><a href="{{ route('tasks.show', base64_encode($notification->task_id)) }}"> {{ $notification->message }} </a></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+>>>>>>> f822cf6 (updation in the)
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
@@ -58,6 +80,7 @@
 @endsection
 
 @section('script')
+<<<<<<< HEAD
 <script>
     $('#notifications-datatable').DataTable({
         "ordering": false
@@ -79,4 +102,9 @@
         });
     });
 </script>
+=======
+    <script>
+        $('#notifications-datatable').DataTable();
+    </script>
+>>>>>>> f822cf6 (updation in the)
 @endsection

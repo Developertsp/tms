@@ -22,8 +22,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+<<<<<<< HEAD
         'scope',
         'company_id',
+=======
+>>>>>>> f822cf6 (updation in the)
         'password',
         'profile_pic',
         'joining_date',
@@ -65,6 +68,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class);
     }
+<<<<<<< HEAD
     
     public function company()
     {
@@ -75,4 +79,6 @@ class User extends Authenticatable
     {
         return $this->hasOne(ForgetPasswordOtp::class);
     }
+=======
+>>>>>>> f822cf6 (updation in the)
 }

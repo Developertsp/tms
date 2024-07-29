@@ -1,11 +1,15 @@
 <?php
 
 return [
+<<<<<<< HEAD
     
+=======
+>>>>>>> f822cf6 (updation in the)
     'STATUS_LIST' => [
         1 => 'Assigned',
         2 => 'Work Started',
         3 => 'Closed',
+<<<<<<< HEAD
         4 => 'Completed',
         5 => 'Invalid',
         6 => 'Under QA',
@@ -23,11 +27,16 @@ return [
     ],
 
 
+=======
+    ],
+
+>>>>>>> f822cf6 (updation in the)
     'PRIORITY_LIST' => [
         1 => 'High',
         2 => 'Medium',
         3 => 'Low',
     ],
+<<<<<<< HEAD
     
     'USER_STATUS' => [
         'Active'     => 1,
@@ -60,4 +69,6 @@ return [
         2 => 'Weekly',
         3 => 'Monthly',
     ],
+=======
+>>>>>>> f822cf6 (updation in the)
 ];

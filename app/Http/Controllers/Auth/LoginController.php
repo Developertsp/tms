@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
 use App\Mail\OtpMail;
 use App\Models\ForgetPasswordOtp;
 use App\Models\User;
@@ -122,6 +123,12 @@ class LoginController extends Controller
     }
 
 
+=======
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
+class LoginController extends Controller
+{
+>>>>>>> f822cf6 (updation in the)
     /*
     |--------------------------------------------------------------------------
     | Login Controller

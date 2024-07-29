@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+<<<<<<< HEAD
             $table->string('scope');
             $table->unsignedBigInteger('company_id')->nullable();
+=======
+>>>>>>> f822cf6 (updation in the)
             $table->text('password');
             $table->text('profile_pic')->nullable();
             $table->date('joining_date')->nullable();

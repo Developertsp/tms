@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+<<<<<<< HEAD
             $table->text('description')->nullable();
             $table->text('plan')->nullable();
             $table->date('deadline')->nullable();
@@ -21,6 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('company_id');
             $table->tinyInteger('status')->nullable();
+=======
+>>>>>>> f822cf6 (updation in the)
             $table->tinyInteger('is_enable')->default(1);
             $table->tinyInteger('created_by');
             $table->tinyInteger('updated_by')->nullable();

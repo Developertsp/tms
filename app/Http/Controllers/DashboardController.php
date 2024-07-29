@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,17 +17,23 @@ use App\Models\Project;
 use App\Models\Log;
 use App\Models\Company;
 use App\Models\Department;
+=======
+>>>>>>> f822cf6 (updation in the)
 
 class DashboardController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+<<<<<<< HEAD
         parent::__construct();
+=======
+>>>>>>> f822cf6 (updation in the)
     }
 
     public function index()
     {
+<<<<<<< HEAD
         $user = Auth::user();
         $scope = $user->scope;
 <<<<<<< HEAD
@@ -305,5 +312,8 @@ class DashboardController extends Controller
         $response = $this->make_dashboard_data($tasks);
 
         return response()->json(['stats' => $response]);
+=======
+        return view('dashboard');
+>>>>>>> f822cf6 (updation in the)
     }
 }

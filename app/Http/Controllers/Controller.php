@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
 
+=======
+>>>>>>> f822cf6 (updation in the)
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+<<<<<<< HEAD
 
     public $desi_scopes;
     public $task_status;
@@ -30,4 +34,6 @@ class Controller extends BaseController
         view()->share('proj_status', $this->proj_status);
     }
 
+=======
+>>>>>>> f822cf6 (updation in the)
 }

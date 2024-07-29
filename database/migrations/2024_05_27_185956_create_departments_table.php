@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+<<<<<<< HEAD
             $table->string('email')->nullable();
             $table->string('members')->nullable();;
             $table->string('description');
             $table->unsignedBigInteger('company_id');
+=======
+>>>>>>> f822cf6 (updation in the)
             $table->tinyInteger('is_enable')->default(1);
             $table->integer('created_by');
             $table->integer('updated_by')->nullable();

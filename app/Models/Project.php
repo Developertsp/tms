@@ -12,6 +12,7 @@ class Project extends Model
 
     protected $fillable = [
         'name',
+<<<<<<< HEAD
         'description',
         'plan',
         'department_id',
@@ -21,6 +22,9 @@ class Project extends Model
         'status',
         'is_enable',
         'created_by',
+=======
+        'is_enable',
+>>>>>>> f822cf6 (updation in the)
         'updated_by',
     ];
 
@@ -28,6 +32,7 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+<<<<<<< HEAD
     
     public function company()
     {
@@ -43,4 +48,6 @@ class Project extends Model
     {
         return $this->hasMany(ProjectAttachment::class);
     }
+=======
+>>>>>>> f822cf6 (updation in the)
 }
