@@ -36,7 +36,7 @@
             <div class="card card-body">
 
                 <div class="bg-secondary rounded py-2 mt-2 px-4 text-white">
-                    <h4 class=" fw-bold text-white"><u> Summary: </u></h4>
+                    <h4 class=" fw-bold text-white"><u> Summary:</u></h4>
                     <p class="card-title">{{ $task->title }}</p>
                 </div>
 
@@ -107,13 +107,10 @@
                         <button type="submit" class="btn btn-primary w-md">Submit</button>
                     </div>
                 </form>
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> 13267c401eec7612fcd3978597c870a8ae418182
             </div>
         </div>
 
@@ -159,7 +156,7 @@
 
                         <span class="badge badge-soft-success float-end rounded-pill py-1 ">
                             {{ $task->end_date ? $task->formatted_end_date : '' }}</span>
-                        @if (in_array(Auth::user()->scope, [1, 2, 3]))
+                        @if (in_array(Auth::user()->scope, [1, 2]))
                             <i class="fa fa-edit float-right mx-2 mt-1" style="cursor:pointer;" data-toggle="modal"
                                 data-target="#deadline_modal"></i>
                         @endif
