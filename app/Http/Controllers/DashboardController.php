@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,26 +16,19 @@ use App\Models\Project;
 use App\Models\Log;
 use App\Models\Company;
 use App\Models\Department;
-=======
->>>>>>> f822cf6 (updation in the)
 
 class DashboardController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
-<<<<<<< HEAD
         parent::__construct();
-=======
->>>>>>> f822cf6 (updation in the)
     }
 
     public function index()
     {
-<<<<<<< HEAD
         $user = Auth::user();
         $scope = $user->scope;
-<<<<<<< HEAD
         $user->load('roles.permissions');
         
 
@@ -50,9 +42,6 @@ class DashboardController extends Controller
         // return $rolesWithPermissions;
         $notes = $user->notes;
       
-=======
-
->>>>>>> parent of 4b8c7e4 (notification updated)
         $CONSTANTS = config('constants')['DESIGNATION_SCOPE'];
 
         switch ($scope) {
@@ -72,6 +61,7 @@ class DashboardController extends Controller
                 break;
         }
         $data['stats'] = $response;
+        $data['notes'] = $notes;
 
         if (system_role()) {
             $data['companies'] = Company::where('is_enable', 1)->count();
@@ -312,8 +302,5 @@ class DashboardController extends Controller
         $response = $this->make_dashboard_data($tasks);
 
         return response()->json(['stats' => $response]);
-=======
-        return view('dashboard');
->>>>>>> f822cf6 (updation in the)
     }
 }

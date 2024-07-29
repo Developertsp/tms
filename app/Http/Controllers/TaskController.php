@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
 use Carbon\Carbon;
 use App\Models\Log;
 use App\Models\Task;
@@ -21,42 +20,21 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Services\PushNotificationService;
 
 
-=======
-use Illuminate\Http\Request;
-use App\Models\Task;
-use App\Models\User;
-use App\Models\Project;
-use App\Models\Attachment;
-use App\Models\Log;
-use App\Models\Notification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Services\PushNotificationService;
-
->>>>>>> f822cf6 (updation in the)
 class TaskController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
 
-<<<<<<< HEAD
         $this->middleware('permission:view-tasks|create-tasks|update-tasks|delete-tasks', ['only' => ['index', 'store']]);
         $this->middleware('permission:create-tasks', ['only' => ['create', 'store']]);
         $this->middleware('permission:update-tasks', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
         parent::__construct();
-=======
-        $this->middleware('permission:view-tasks|create-tasks|update-tasks|delete-tasks', ['only' => ['index','store']]);
-        $this->middleware('permission:create-tasks', ['only' => ['create','store']]);
-        $this->middleware('permission:update-tasks', ['only' => ['edit','update']]);
-        $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
->>>>>>> f822cf6 (updation in the)
     }
 
     public function index()
     {
-<<<<<<< HEAD
         $user = Auth::user();
         $department_id = $user->department_id;
         $data['department_id'] = $department_id; 
@@ -82,36 +60,18 @@ class TaskController extends Controller
         }
 
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-=======
-        // $data['tasks'] = Task::where('is_enable', 1)->with('project', 'users', 'creator')->orderBy('id', 'desc')->get();
-        
-        $user = Auth::user();
-        $department_id = $user->department_id;
 
-        if($department_id){
-            $data['tasks'] = Task::whereHas('users', function ($query) use ($department_id) {
-                $query->where('department_id', $department_id);
-            })->where('is_enable', 1)
-              ->with('project', 'users', 'creator')
-              ->orderBy('id', 'desc')
-              ->get();
-        }
-        else{
-            $data['tasks'] = Task::where('is_enable', 1)->with('project', 'users', 'creator')->orderBy('id', 'desc')->get();
-        }
-
->>>>>>> f822cf6 (updation in the)
+    //  return $data;
         return view('tasks.list', $data);
     }
 
     public function show($id)
     {
-<<<<<<< HEAD
         $user = Auth::user();
         $department_id = $user->department_id;
 
         $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
+        $data['task']   = Task::with('project', 'users:id,name', 'attachments', 'comments.comment_images','comments.user', 'logs.user', 'tracking.user')->find($task_id);
         $data['assignedUsers'] = $data['task']->users->pluck('name', 'id')->toArray();
         // $data['users']      = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
         $data['projects']   = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
@@ -128,18 +88,12 @@ class TaskController extends Controller
             $data['users'] = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
-=======
-        $task_id        = base64_decode($id);
-        $data['task']   = Task::with('project', 'users', 'attachments', 'comments.user', 'logs.user')->find($task_id);
-        $data['status'] = config('constants.STATUS_LIST');
->>>>>>> f822cf6 (updation in the)
 
         return view('tasks.show', $data);
     }
 
     public function create()
     {
-<<<<<<< HEAD
         $user = Auth::user();
    
         $department_id = $user->department_id;
@@ -161,13 +115,6 @@ class TaskController extends Controller
             $data['departments'] = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
         }
 
-=======
-        $data['users']      = User::where('is_enable', 1)->get();
-        $data['projects']   = Project::where('is_enable', 1)->get();
-        $data['status']     = config('constants.STATUS_LIST');
-        $data['priority']   = config('constants.PRIORITY_LIST');
-
->>>>>>> f822cf6 (updation in the)
         return view('tasks.create', $data);
     }
 
@@ -185,10 +132,7 @@ class TaskController extends Controller
 
         $task = new Task();
 
-<<<<<<< HEAD
         $task['company_id']     = user_company_id();
-=======
->>>>>>> f822cf6 (updation in the)
         $task['project_id']     = $request->project_id;
         $task['priority']       = $request->priority;
         $task['status']         = $request->status;
@@ -197,7 +141,6 @@ class TaskController extends Controller
         $task['created_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
         $task['end_date']       = $request->end_date ?? NULL;
-<<<<<<< HEAD
         $task['department_id']  = $request->department_id;
 
         $response = $task->save();
@@ -213,19 +156,6 @@ class TaskController extends Controller
             $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
             $org_name   = $file->getClientOriginalName();
 
-=======
-
-        $response = $task->save();
-
-        $users = $request->assign_to;
-        $task->users()->attach($users);
-
-        if($request->hasFile('attachment')){
-            $file       = $request->file('attachment');
-            $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
-            $org_name   = $file->getClientOriginalName();
-            
->>>>>>> f822cf6 (updation in the)
             $request->file('attachment')->storeAs('public/tasks_file/', $file_name);
 
             $file_data = new Attachment();
@@ -238,7 +168,6 @@ class TaskController extends Controller
             $file_data->save();
         }
 
-<<<<<<< HEAD
         if ($request->assign_to) {
             // Notification
             $notification = new Notification();
@@ -259,32 +188,11 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
+            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
+            sendNotification($user->fcm_token, 'Task Notification', 'New task is assigned to you.');
         }
 
         return redirect()->route('tasks.list')->with('success', 'Task assigned successfully');
-=======
-        // Notification
-        $notification = new Notification();
-
-        $notification['task_id']    = $task->id;
-        $notification['title']      = 'New Task Assigned';
-        $notification['message']    = 'A new task is assigned to you by '. Auth::user()->name;
-        $notification['user_id']    = $request->assign_to[0];
-        $notification['created_by'] = Auth::id();
-
-        $notification->save();
-
-        // push notification
-        $msg_post = [
-            'notification_message' => 'New task is assigned to you.',
-            'url' => route('tasks.show', ['id' => base64_encode($notification['task_id'])])
-        ];
-        $user_ids = [$notification['user_id']];
-        $push_notification = new PushNotificationService();
-        $push_notification->send($msg_post, $user_ids);
-
-        return redirect()->route('tasks.list')->with('success','Task assigned successfully');
->>>>>>> f822cf6 (updation in the)
     }
 
     public function update(Request $request)
@@ -293,15 +201,10 @@ class TaskController extends Controller
             'task_id' => 'required',
             'status' => 'required',
         ]);
-<<<<<<< HEAD
-=======
-        
->>>>>>> f822cf6 (updation in the)
         // Find the task and store the old status
         $task = Task::find($request->task_id);
         $old_status = $task->status;
 
-<<<<<<< HEAD
         $task['department_id']  = $request->department_id ?? Null;
         $task['project_id']     = $request->project_id;
         $task['priority']       = $request->priority;
@@ -310,7 +213,11 @@ class TaskController extends Controller
         $task['description']    = $request->description;
         $task['updated_by']     = Auth::id();
         $task['start_date']     = $request->start_date ?? NULL;
-        $task['end_date']       = $request->end_date ?? NULL;
+        // $task['end_date']       = $request->end_date ?? NULL;
+        if($request->end_date){
+            $task['end_date']       = $request->end_date;
+        }
+       
 
         if($request->status == config('constants.TASK_STATUS')['Closed']){
             $task['closed_date'] = Carbon::now()->format('Y-m-d');
@@ -338,6 +245,8 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
+            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
+            sendNotification($user->fcm_token, 'Revised Task Notification', 'You task is revised to you by ' . Auth::user()->name);
 
 
         }
@@ -386,15 +295,10 @@ class TaskController extends Controller
             $user_ids = [$notification['user_id']];
             $push_notification = new PushNotificationService();
             $push_notification->send($msg_post, $user_ids);
-        }
-=======
-        // Prepare the task data for update
-        $task_data['status'] = $request->status;
-        $task_data['updated_by'] = Auth::id();
-        $task_response = $task->update($task_data);
-        
 
->>>>>>> f822cf6 (updation in the)
+            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
+            sendNotification($user->fcm_token, 'Task Notification', 'Your task is updated to you');
+        }
         // Create a log entry
         $log_data = new Log();
         $log_data['user_id']    = Auth::id();
@@ -405,15 +309,9 @@ class TaskController extends Controller
 
         $old_status = config('constants.STATUS_LIST')[$old_status];
         $new_status = config('constants.STATUS_LIST')[$request->status];
-<<<<<<< HEAD
 
         $message = '. Changed status from ' . $old_status . ' to ' . $new_status;
 
-=======
-        
-        $message = '. Changed status from '.$old_status.' to '.$new_status; 
-        
->>>>>>> f822cf6 (updation in the)
         // Notification
         $notification = new Notification();
         $notification['task_id']    = $request->task_id;
@@ -438,10 +336,10 @@ class TaskController extends Controller
         $user_ids = [$notification['user_id']];
         $push_notification = new PushNotificationService();
         $push_notification->send($msg_post, $user_ids);
-
+        $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
+        sendNotification($user->fcm_token, 'Task Notification', 'Task Staus Changed');
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
     }
-<<<<<<< HEAD
 
     public function destroy($id)
     {
@@ -581,6 +479,4 @@ class TaskController extends Controller
 
         return redirect()->route('tasks.show', ['id' => base64_encode($request->task_id)])->with('success', 'Task updated successfully');
     }
-=======
->>>>>>> f822cf6 (updation in the)
 }

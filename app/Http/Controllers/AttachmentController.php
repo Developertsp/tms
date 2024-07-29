@@ -7,17 +7,14 @@ use App\Models\Attachment;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Task;
 use App\Models\Notification;
+use App\Models\User;
 
 class AttachmentController extends Controller
 {
     public function store(Request $request)
     {
         $request->validate([
-<<<<<<< HEAD
             'file' => 'required|max:10240',
-=======
-            'file' => 'required|max:2048',
->>>>>>> f822cf6 (updation in the)
         ]);
 
         $task_id = $request->task_id;
@@ -54,6 +51,9 @@ class AttachmentController extends Controller
                 // If user is assigned user, notify the creator
                 $notification['user_id'] = $task->created_by;
             }
+
+            $user = User::where('id',$notification['user_id'])->select('fcm_token')->first();
+            sendNotification($user->fcm_token, 'New Attachment', 'A new attachment is added by '. Auth::user()->name.' to the Task ID:'.$task->id);
 
             $notification->save();
 

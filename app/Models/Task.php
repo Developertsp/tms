@@ -5,11 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-=======
->>>>>>> f822cf6 (updation in the)
 
 class Task extends Model
 {
@@ -19,7 +16,6 @@ class Task extends Model
         'status',
     ];
 
-<<<<<<< HEAD
     protected static function booted()
     {
         static::addGlobalScope('company', function (Builder $builder) {
@@ -29,8 +25,6 @@ class Task extends Model
         });
     }
 
-=======
->>>>>>> f822cf6 (updation in the)
     public function users()
     {
         return $this->belongsToMany(User::class, 'task_user');
@@ -61,14 +55,11 @@ class Task extends Model
         return $this->hasMany(Log::class);
     }
 
-<<<<<<< HEAD
     public function tracking()
     {
         return $this->hasMany(TaskTimeTracking::class);
     }
 
-=======
->>>>>>> f822cf6 (updation in the)
     // accessor for formatted created_at
     public function getFormattedCreatedAtAttribute()
     {
@@ -84,7 +75,6 @@ class Task extends Model
     {
         return \Carbon\Carbon::parse($this->attributes['end_date'])->format('d-m-Y');
     }
-<<<<<<< HEAD
 
     public function getFormattedClosedDateAttribute()
     {
@@ -110,6 +100,4 @@ class Task extends Model
         $remainingMinutes = $totalMinutes % 60;
         return sprintf('%dD %02dH %02dM', $days, $hours, $remainingMinutes);
     }
-=======
->>>>>>> f822cf6 (updation in the)
 }

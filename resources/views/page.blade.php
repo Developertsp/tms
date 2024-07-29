@@ -1,5 +1,4 @@
 @extends('layout.app')
-<<<<<<< HEAD
 @section('title', 'Edit Project | TSP - Task Management System')
 @section('pageTitle', 'Edit Project Detail')
 
@@ -50,12 +49,5 @@
             </div>
         </div>
     </div>
-=======
-@section('title', 'Page Name')
-@section('pageTitle', 'Page Name')
-@section('content')
-
-
->>>>>>> f822cf6 (updation in the)
 
 @endsection

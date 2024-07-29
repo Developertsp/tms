@@ -21,12 +21,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PermissionSeeder::class,
-<<<<<<< HEAD
             AdminUserSeeder::class,
             // SimpleUserSeeder::class,
-=======
-            // AdminUserSeeder::class
->>>>>>> f822cf6 (updation in the)
         ]);
     }
 }

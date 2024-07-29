@@ -15,10 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('task_id');
             $table->string('file_name');
-<<<<<<< HEAD
             $table->text('file_url')->nullable();
-=======
->>>>>>> f822cf6 (updation in the)
             $table->text('path');
             $table->tinyInteger('is_enable')->default(1);
             $table->integer('created_by')->default(1);

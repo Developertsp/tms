@@ -20,10 +20,7 @@ class SimpleUserSeeder extends Seeder
             'name'      => 'Usman',
             'email'     => 'usman@gmail.com',
             'password'  => Hash::make('12345678'),
-<<<<<<< HEAD
             'created_by'  => 1,
-=======
->>>>>>> f822cf6 (updation in the)
         ]);
 
         // $role = Role::create(['name' => 'Super Admin']);

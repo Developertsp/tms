@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('comment_images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('members')->nullable();;
-            $table->string('description');
-            $table->unsignedBigInteger('company_id');
+            $table->foreignId('comment_id');
+            $table->string('file_name');
+            $table->text('file_url')->nullable();
+            $table->text('path');
             $table->tinyInteger('is_enable')->default(1);
-            $table->integer('created_by');
-            $table->integer('updated_by')->nullable();
-            $table->softDeletes();
+            $table->integer('created_by')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('comment_images');
     }
 };
