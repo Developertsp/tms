@@ -82,6 +82,9 @@
                                     @can('update-users')
                                     <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('users.edit', $user->id) }}">Edit</a>
                                     @endcan
+                                    {{-- @can('update-users') --}}
+                                    <a class="btn btn-primary rounded-pill px-4 py-1" href="{{ route('users.show', $user->id) }}">Details</a>
+                                    {{-- @endcan --}}
                                     @can('delete-users')
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                         @csrf

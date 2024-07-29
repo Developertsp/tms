@@ -4,7 +4,15 @@
 @section('breadcrumTitle', 'Add New JD Task')
 
 @section('content')
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--multiple{
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        border-radius: 0px !important;
+    }
+</style>
 <!-- Start Page Content here -->
     <div class="row">
         <div class="col-sm-12">
@@ -59,16 +67,17 @@
                         <div class="form-group row">
                             <label for="user" class="col-sm-3 col-form-label">User</label>
                             <div class="col-sm-9">
-                                <select name="user" id="user" class="form-control users_list" required>
-                                    <option value="" selected>Select User</option>
+                                <select name="user[]" id="user" multiple class="form-control users_list" required>
+                                   
                                 </select>
                             </div>
-                            @if ($errors->has('role'))
+                            @if ($errors->has('user'))
                                 <span class="help-block text-danger">
-                                    {{ $errors->first('role') }}
+                                    {{ $errors->first('user') }}
                                 </span>
                             @endif
                         </div>
+    
 
                         <div class="form-group row">
                             <label for="frequency" class="col-sm-3 col-form-label">Frequency</label>
@@ -99,8 +108,12 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function (){
+            $('#user').select2({
+                 placeholder: "Select User"
+            });
             $('#role').on('change', function(){
                 var roleId = $('#role').val();
                 
@@ -115,7 +128,7 @@
 
                         var usersSelect = $('#user');
                         usersSelect.empty();
-                        usersSelect.append('<option value="" selected>Select User</option>'); // Add the default option
+                        // usersSelect.append('<option value="" selected>Select User</option>'); // Add the default option
                         
                         $.each(response.users, function(key, value) {
                             usersSelect.append('<option value="' + key + '">' + value + '</option>');
