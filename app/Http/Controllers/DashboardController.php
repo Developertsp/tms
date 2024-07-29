@@ -29,6 +29,17 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $scope = $user->scope;
+        $user->load('roles.permissions');
+        
+
+        // Get the roles and permissions
+        $rolesWithPermissions = $user->roles->map(function ($role) {
+            return [
+                'role' => $role->name,
+                'permissions' => $role->permissions->pluck('name')
+            ];
+        });
+        // return $rolesWithPermissions;
         $notes = $user->notes;
       
         $CONSTANTS = config('constants')['DESIGNATION_SCOPE'];

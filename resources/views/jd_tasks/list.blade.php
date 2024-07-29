@@ -11,6 +11,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5>JD Task List</h5>
+                    
                 </div>
                 <div class="card-body table-border-style">
                     <div class="table-responsive">
@@ -30,6 +31,7 @@
                                     <td>{{ $task->description }}</td>
                                     <td>{{ $task->user->name }}</td>
                                     <td>
+                                        {{-- @if(Auth::user()->scope) --}}
                                         @can('update-jd-tasks')
                                             <a class="btn btn-primary  rounded-pill px-4 py-1" href="{{ route('jd.edit', $task->id) }}">Edit</a>
                                         @endcan
@@ -44,6 +46,7 @@
                                 </tr>
                                 @endforeach
                             </tbody>
+                           
                         </table>
                     </div>
                 </div>

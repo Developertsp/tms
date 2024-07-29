@@ -8,6 +8,7 @@
                     <div class="user-details">
                         <div id="more-details">{{filter_company_id(Auth()->User()->roles->toArray()[0]['name']) ?? 'Guest'}} <i class="fa fa-caret-down"></i></div>
                     </div>
+
                 </div>
                 <div class="collapse" id="nav-user-link d-none">
                     <ul class="list-unstyled">
@@ -79,6 +80,7 @@
                             <li><a href="{{ route('jd.list') }}">List</a></li>
                         </ul>
                     </li>
+                   
                 @endcan
 
                 @can('view-departments')
