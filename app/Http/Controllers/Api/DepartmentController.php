@@ -10,28 +10,36 @@ use App\Models\Company;
 
 class DepartmentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
 
-        $this->middleware('permission:view-departments|create-departments|update-departments|delete-departments', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-departments', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update-departments', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-departments', ['only' => ['destroy']]);
-    }
+    //     $this->middleware('permission:view-departments|create-departments|update-departments|delete-departments', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-departments', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:update-departments', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-departments', ['only' => ['destroy']]);
+    // }
 
     public function index()
     {
-        if (system_role()) {
-            $departments = Department::with('company:id,name')->where('is_enable', 1)->orderBy('company_id')->get();
-        } else {
-            $departments = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
-        }
+        try {
+            $user = auth('sanctum')->user();
+            if (system_role()) {
+                $departments = Department::with('company:id,name')->where('is_enable', 1)->orderBy('company_id')->get();
+            } else {
+                $departments = Department::where('is_enable', 1)->where('company_id', user_company_id())->orderBy('id')->get();
+            }
 
-        return response()->json([
-            'success' => true,
-            'data' => $departments
-        ], 200);
+            if ($departments->isEmpty()) {
+                return response()->json(['status' => 'empty', 'message' => 'No department found'], 404);
+            }
+            return response()->json(['status' => 'success', 'message' => 'All departments', 'data' => [
+                'user' => $user,
+                'departments' => $departments
+            ]]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error retrieving departments record', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request)

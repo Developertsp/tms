@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\CompanyWelcomeMail;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -13,25 +14,32 @@ use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
-    public function __construct()
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
+
+    //     $this->middleware('permission:view-companies|create-companies|update-companies|delete-companies', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-companies', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:update-companies', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-companies', ['only' => ['destroy']]);
+    // }
+
+    public function index(): JsonResponse
     {
-        $this->middleware('auth:api');
+        try {
+            $user = Auth::user();
+            $companies = Company::orderBy('id', 'DESC')->get();
 
-        $this->middleware('permission:view-companies|create-companies|update-companies|delete-companies', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-companies', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update-companies', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-companies', ['only' => ['destroy']]);
-    }
-
-    public function index()
-    {
-        $user = Auth::user();
-        $companies = Company::orderBy('id', 'DESC')->get();
-
-        return response()->json([
-            'user' => $user,
-            'companies' => $companies
-        ]);
+            if ($companies->isEmpty()) {
+                return response()->json(['status' => 'empty', 'message' => 'No company found'], 404);
+            }
+            return response()->json(['status' => 'success', 'message' => 'All ccompanies', 'data' => [
+                'user' => $user,
+                'companies' => $companies
+            ]]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error retrieving companies record', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function create()
@@ -153,4 +161,3 @@ class CompanyController extends Controller
         return response()->json(['message' => 'Company deleted successfully']);
     }
 }
-

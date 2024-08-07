@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ProjectAttachmentController;
 use App\Http\Controllers\Api\ProjectCommentController;
@@ -25,15 +26,21 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 //     return $request->user();
 // });
 Route::middleware(['auth:sanctum'])->group(function () {
+    // Project Routes
     Route::get('projects', [ProjectController::class, 'index'])->name('projects.list');
+    // Company Routes
+    Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
+    // Department Routes
+    Route::get('departments', [DepartmentController::class, 'index'])->name('departments.list');
+    // Task Routes
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.list');
 });
 // Company Routes
-// Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
-// Route::get('companies/create', [CompanyController::class, 'create'])->name('companies.create');
-// Route::post('companies/store', [CompanyController::class, 'store'])->name('companies.store');
-// Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
-// Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
-// Route::delete('companies/destroy/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+Route::get('companies/create', [CompanyController::class, 'create'])->name('companies.create');
+Route::post('companies/store', [CompanyController::class, 'store'])->name('companies.store');
+Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
+Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
+Route::delete('companies/destroy/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 
 
 // Task Routes
@@ -58,7 +65,6 @@ Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('t
 
 
 // Project Routes
-Route::get('projects', [ProjectController::class, 'index'])->name('projects.list');
 Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create');
 Route::post('projects/store', [ProjectController::class, 'store'])->name('projects.store');
 Route::get('projects/edit/{id}', [ProjectController::class, 'edit'])->name('projects.edit');

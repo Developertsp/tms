@@ -16,7 +16,7 @@ function end_url()
 
 function system_role()
 {
-    $user = Auth()->user();
+    $user = auth('sanctum')->user();
     $user_roles =  $user->roles->pluck('name', 'name')->all();
     $system_roles = ['software_manager' => 'software_manager'];
     return ($user_roles  == $system_roles) ? true : false;
@@ -24,7 +24,7 @@ function system_role()
 
 function user_company_id()
 {
-    $company_id = Auth()->user()->company_id;
+    $company_id = auth('sanctum')->user()->company_id;
     return $company_id;
 }
 

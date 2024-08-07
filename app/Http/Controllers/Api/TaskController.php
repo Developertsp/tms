@@ -19,19 +19,19 @@ use App\Services\PushNotificationService;
 
 class TaskController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
 
-        $this->middleware('permission:view-tasks|create-tasks|update-tasks|delete-tasks', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-tasks', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update-tasks', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
-    }
+    //     $this->middleware('permission:view-tasks|create-tasks|update-tasks|delete-tasks', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-tasks', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:update-tasks', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
+    // }
 
     public function index()
     {
-        $user = Auth::user();
+        $user = auth('sanctum')->user();
         $department_id = $user->department_id;
 
         if ($department_id) {
@@ -58,10 +58,14 @@ class TaskController extends Controller
         $projects = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
         return response()->json([
+            'status' => 'success', 
+            'message' => 'Data Retrieved',
+            'data' => [
             'tasks' => $tasks,
             'users' => $users,
             'departments' => $departments,
             'projects' => $projects
+            ]
         ]);
     }
 
