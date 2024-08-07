@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CompanyWelcomeMail;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
@@ -24,7 +26,7 @@ class CompanyController extends Controller
     public function index()
     {
         $data['user'] = Auth::user();
-        $data['companies'] = Company::orderBy('id','DESC')->get();
+        $data['companies'] = Company::orderBy('id', 'DESC')->get();
         return view('companies.list', $data);
     }
 
@@ -67,10 +69,15 @@ class CompanyController extends Controller
             $company->logo = $image_name;
         }
         $response = $company->save();
-        if($response){ 
+        if ($response) {
+            try {
+                Mail::to($company->email)->send(new CompanyWelcomeMail($company));
+            } catch (\Exception $e) {
+                // return redirect()->route('companies.list')->with('warning', 'Company created successfully, but the welcome email could not be sent.');
+            }
             return redirect()->route('companies.list')->with('success', 'Company created successfully');
-        }else{
-            return redirect()->back()->with('error', 'Company does not created.');
+        } else {
+            return redirect()->back()->with('error', 'Company was not created.');
         }
     }
 
@@ -89,7 +96,7 @@ class CompanyController extends Controller
                 'email',
                 Rule::unique('companies')->ignore($request->id),
             ],
-    
+
             'logo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'joining_date'  => 'nullable|date_format:Y-m-d',
             'expiry_date'   => 'nullable|date_format:Y-m-d',
@@ -116,14 +123,13 @@ class CompanyController extends Controller
         }
 
         $company = Company::find($request->id);
-        $response = $company ->update($post_data);
+        $response = $company->update($post_data);
 
-        if($response){ 
+        if ($response) {
             return redirect()->route('companies.list')->with('success', 'Company updated successfully');
-        }else{
+        } else {
             return redirect()->back()->with('error', 'Company does not updated.');
         }
-
     }
 
     public function destroy($id)
