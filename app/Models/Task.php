@@ -20,7 +20,7 @@ class Task extends Model
     {
         static::addGlobalScope('company', function (Builder $builder) {
             if (!system_role()) {
-                $builder->where('company_id', Auth::user()->company_id);
+                $builder->where('company_id', auth('sanctum')->user()->company_id);
             }
         });
     }
