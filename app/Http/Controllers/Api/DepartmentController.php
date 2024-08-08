@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Department;
 use App\Models\Company;
+use Illuminate\Support\Facades\Validator;
 
 class DepartmentController extends Controller
 {
@@ -42,74 +43,81 @@ class DepartmentController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(),  [
             'name' => 'required',
             'description' => 'required',
             'members' => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()]);
+        }
 
         $department = new Department();
         $department->name = $request->name;
         $department->description = $request->description;
         $department->members = $request->members;
         $department->email = $request->email ?? null;
-        $department->company_id = user_company_id();
-        $department->created_by = Auth::id();
+        $department->company_id = user_company_id() ?? 2;
+        $department->created_by = auth('sanctum')->user()->id;
 
-        $department->save();
+        try {
+            $department->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Department created successfully',
-            'data' => $department
-        ], 201);
-    }
-
-    public function show($id)
-    {
-        $department = Department::with('company:id,name')->where('is_enable', 1)->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $department
-        ], 200);
+            return response()->json([
+                'success' => 'success',
+                'message' => 'Department created successfully',
+                'data' => $department
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error creating department record', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(),  [
             'name' => 'required',
             'description' => 'required',
             'members' => 'required',
         ]);
-
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()]);
+        }
         $department = Department::findOrFail($id);
         $department->name = $request->name;
         $department->description = $request->description;
         $department->members = $request->members;
         $department->email = $request->email ?? null;
-        $department->company_id = user_company_id();
-        $department->updated_by = Auth::id();
+        $department->company_id = user_company_id() ?? 2;
+        $department->updated_by = auth('sanctum')->user()->id;
 
-        $department->save();
+          try {
+            $department->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Department updated successfully',
-            'data' => $department
-        ], 200);
+            return response()->json([
+                'success' => 'success',
+                'message' => 'Department updated successfully',
+                'data' => $department
+            ], 200);
+          }catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in updating department record', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy($id)
     {
+      try {
         $department = Department::findOrFail($id);
         $department->delete();
 
         return response()->json([
-            'success' => true,
+            'status' => 'success',
             'message' => 'Department deleted successfully'
         ], 200);
+      } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => 'Error in deleting department record', 'error' => $e->getMessage()], 500);
+      }
     }
 }

@@ -28,6 +28,7 @@ function user_company_id()
     return $company_id;
 }
 
+
 function filter_company_id($name)
 {
     $transformedName = preg_replace('/^[^#]*#/', '', $name);
