@@ -38,27 +38,7 @@ class ProjectController extends Controller
         return response()->json(['status' => 'error', 'message' => 'Error retrieving projects', 'error' => $e->getMessage()], 500);
     }
     }
-
-    public function create()
-    {
-        $user = Auth::user();
-        $department_id = $user->department_id;
-
-        if ($department_id) {
-            $departments = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        } else {
-            $departments = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        }
-
-        $status = config('constants.PROJECT_STATUS_LIST');
-
-        return response()->json([
-            'departments' => $departments,
-            'status' => $status
-        ]);
-    }
-
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
@@ -71,47 +51,26 @@ class ProjectController extends Controller
         $project->department_id = $request->department_id ?? null;
         $project->ref_url = $request->ref_url ?? null;
         $project->deadline = $request->deadline ?? null;
-        $project->company_id = user_company_id();
+        $project->company_id = user_company_id() ?? 2;
         $project->status = $request->status;
-        $project->created_by = Auth::id();
+        $project->created_by = auth('sanctum')->user()->id;
+        try {
+            $project->save();
 
-        $project->save();
-
-        return response()->json(['message' => 'Project created successfully', 'project' => $project]);
+            return response()->json(['status' => 'success','message' => 'Project created successfully', 'project' => $project]);
+        } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => 'Error in creating project record', 'error' => $e->getMessage()], 500);
+        }
     }
 
-    public function edit($id)
-    {
-        $user = Auth::user();
-        $department_id = $user->department_id;
 
-        if ($department_id) {
-            $departments = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        } else {
-            $departments = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        }
-
-        $status = config('constants.PROJECT_STATUS_LIST');
-        $project = Project::find($id);
-
-        if (!$project) {
-            return response()->json(['message' => 'Project not found'], 404);
-        }
-
-        return response()->json([
-            'departments' => $departments,
-            'status' => $status,
-            'project' => $project
-        ]);
-    }
-
-    public function update(Request $request)
+    public function update(Request $request,$id)
     {
         $this->validate($request, [
             'name' => 'required',
         ]);
 
-        $project = Project::find($request->id);
+        $project = Project::find($id);
 
         if (!$project) {
             return response()->json(['message' => 'Project not found'], 404);
@@ -126,22 +85,29 @@ class ProjectController extends Controller
         $project->status = $request->status;
         $project->updated_by = Auth::id();
 
+       try {
         $project->save();
-
         return response()->json(['message' => 'Project updated successfully', 'project' => $project]);
+       } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => 'Error in updating project record', 'error' => $e->getMessage()], 500);
+       }
     }
 
     public function destroy($id)
-    {
-        $project = Project::findOrFail($id);
-        $project->delete(); // Soft delete
-
-        return response()->json(['message' => 'Project deleted successfully']);
+    {  
+        try {
+            $project = Project::findOrFail($id);
+            $project->delete(); // Soft delete
+            return response()->json(['status' => 'success','message' => 'Project deleted successfully']);
+         }catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in deleting projects record', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function show($id)
     {
-        $project_id = base64_decode($id);
+        // $project_id = base64_decode($id);
+        $project_id = $id;
         $project = Project::with('comments.user', 'attachments')->find($project_id);
 
         if (!$project) {
@@ -151,8 +117,12 @@ class ProjectController extends Controller
         $ref_url = explode('*', $project->ref_url);
 
         return response()->json([
-            'project' => $project,
-            'ref_url' => $ref_url
+             'status' => 'success',
+             'message' => 'Project detail Retrieved',
+             'data' => [
+                'project' => $project,
+                'ref_url' => $ref_url,
+             ]
         ]);
     }
 

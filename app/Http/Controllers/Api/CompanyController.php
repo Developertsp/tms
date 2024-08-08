@@ -6,45 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Mail\CompanyWelcomeMail;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
 
-        $this->middleware('permission:view-companies|create-companies|update-companies|delete-companies', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-companies', ['only' => ['create', 'store']]);
-        $this->middleware('permission:update-companies', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-companies', ['only' => ['destroy']]);
+    //     $this->middleware('permission:view-companies|create-companies|update-companies|delete-companies', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-companies', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:update-companies', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-companies', ['only' => ['destroy']]);
+    // }
+
+    public function index(): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $companies = Company::orderBy('id', 'DESC')->get();
+
+            if ($companies->isEmpty()) {
+                return response()->json(['status' => 'empty', 'message' => 'No company found'], 404);
+            }
+            return response()->json(['status' => 'success', 'message' => 'All ccompanies', 'data' => [
+                'user' => $user,
+                'companies' => $companies
+            ]]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error retrieving companies record', 'error' => $e->getMessage()], 500);
+        }
     }
-
-    public function index()
+    
+    public function create(Request $request) : JsonResponse
     {
-        $user = Auth::user();
-        $companies = Company::orderBy('id', 'DESC')->get();
-
-        return response()->json([
-            'user' => $user,
-            'companies' => $companies
-        ]);
-    }
-
-    public function create()
-    {
-        $user = Auth::user();
-        return response()->json([
-            'user' => $user
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        $this->validate($request, [
+        
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:companies,email',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -53,6 +55,9 @@ class CompanyController extends Controller
             'phone' => 'nullable|numeric',
             'whatsapp' => 'nullable|numeric',
         ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()]);
+        }
 
         if ($request->hasFile('logo')) {
             $image = $request->file('logo');
@@ -67,40 +72,24 @@ class CompanyController extends Controller
         $company->expiry_date = $request->expiry_date;
         $company->phone = $request->phone;
         $company->whatsapp = $request->whatsapp;
-        $company->created_by = Auth::id();
+        $company->created_by = auth('sanctum')->user()->id;
 
         if ($request->hasFile('logo')) {
             $company->logo = $image_name;
         }
-
-        if ($company->save()) {
-            try {
-                Mail::to($company->email)->send(new CompanyWelcomeMail($company));
-            } catch (\Exception $e) {
-                // Log the error or handle it accordingly
+         try {
+            if ($company->save()) {
+                // Mail::to($company->email)->send(new CompanyWelcomeMail($company));
+                return response()->json(['status' => 'success','message' => 'Company created successfully', 'company' => $company]);
             }
-            return response()->json(['message' => 'Company created successfully', 'company' => $company]);
-        } else {
-            return response()->json(['message' => 'Company was not created'], 500);
+         } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error creating companies record', 'error' => $e->getMessage()], 500);
         }
     }
 
-    public function edit($id)
+    public function update(Request $request,$id) :JsonResponse
     {
-        $company = Company::find($id);
-
-        if (!$company) {
-            return response()->json(['message' => 'Company not found'], 404);
-        }
-
-        return response()->json([
-            'company' => $company
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => [
                 'required',
@@ -113,6 +102,9 @@ class CompanyController extends Controller
             'phone' => 'nullable|numeric',
             'whatsapp' => 'nullable|numeric',
         ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()],400);
+        }
 
         $company = Company::find($id);
 
@@ -126,31 +118,35 @@ class CompanyController extends Controller
             $request->file('logo')->storeAs('public/companies_logo/', $image_name);
         }
 
-        $company->name = $request->name;
-        $company->email = $request->email;
-        $company->joining_date = $request->joining_date;
-        $company->expiry_date = $request->expiry_date;
-        $company->phone = $request->phone;
-        $company->whatsapp = $request->whatsapp;
-        $company->updated_by = Auth::id();
+        $post_data['name']         = $request->name;
+        $post_data['email']        = $request->email;
+        $post_data['joining_date'] = $request->joining_date;
+        $post_data['expiry_date']  = $request->expiry_date;
+        $post_data['phone']        = $request->phone;
+        $post_data['whatsapp']     = $request->whatsapp;
+        $post_data['updated_by']   = auth('sanctum')->user()->id;
 
         if ($request->hasFile('logo')) {
-            $company->logo = $image_name;
+            $post_data['logo'] = $image_name;
         }
 
-        if ($company->save()) {
-            return response()->json(['message' => 'Company updated successfully', 'company' => $company]);
-        } else {
-            return response()->json(['message' => 'Company was not updated'], 500);
-        }
+        // try {
+            $company = Company::find($id);
+            $company->update($post_data);
+            return response()->json(['status' => 'success','message' => 'Company updated successfully', 'company' => $company]);
+        //  } catch (\Exception $e) {
+        //     return response()->json(['status' => 'error', 'message' => 'Error on updating companies record', 'error' => $e->getMessage()], 500);
+        // }
     }
 
     public function destroy($id)
     {
-        $company = Company::findOrFail($id);
-        $company->delete(); // Soft delete
-
-        return response()->json(['message' => 'Company deleted successfully']);
+         try {
+            $company = Company::findOrFail($id);
+            $company->delete(); 
+            return response()->json(['status' => 'success','message' => 'Company deleted successfully']);
+         }catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in deleting companies record', 'error' => $e->getMessage()], 500);
+        }
     }
 }
-
