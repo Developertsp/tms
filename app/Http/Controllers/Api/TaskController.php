@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use Carbon\Carbon;
 use App\Models\Log;
 use App\Models\Task;
@@ -16,18 +17,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\PushNotificationService;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-
-    //     $this->middleware('permission:view-tasks|create-tasks|update-tasks|delete-tasks', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:create-tasks', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:update-tasks', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-tasks', ['only' => ['destroy']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    
+        // Apply abilities middleware based on the action
+        // $this->middleware('abilities:view-tasks|create-tasks', ['only' => ['index', 'store']]);
+        // $this->middleware('abilities:create-tasks', ['only' => ['create']]);
+        // $this->middleware('abilities:update-tasks', ['only' => ['edit', 'update']]);
+        // $this->middleware('abilities:delete-tasks', ['only' => ['destroy']]);
+    }
+    
 
     public function index()
     {
@@ -58,13 +62,13 @@ class TaskController extends Controller
         $projects = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'message' => 'Data Retrieved',
             'data' => [
-            'tasks' => $tasks,
-            'users' => $users,
-            'departments' => $departments,
-            'projects' => $projects
+                'tasks' => $tasks,
+                'users' => $users,
+                'departments' => $departments,
+                'projects' => $projects
             ]
         ]);
     }
@@ -75,7 +79,7 @@ class TaskController extends Controller
         $task = Task::with('project', 'users:id,name', 'attachments', 'comments.user', 'logs.user', 'tracking.user')->find($task_id);
 
         if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
+            return response()->json(['status'=>'success','message' => 'Task not found'], 404);
         }
 
         $user = Auth::user();
@@ -96,46 +100,21 @@ class TaskController extends Controller
         $projects = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
 
         return response()->json([
-            'task' => $task,
-            'users' => $users,
-            'departments' => $departments,
-            'projects' => $projects
+            'status' => 'success',
+            'message' => 'Data retrieved Successfully',
+            'data' => [
+                'task' => $task,
+                'users' => $users,
+                'departments' => $departments,
+                'projects' => $projects
+            ]
         ]);
     }
 
-    public function create()
+
+    public function create(Request $request)
     {
-        $user = Auth::user();
-        $department_id = $user->department_id;
-
-        $projects = Project::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        $status = config('constants.STATUS_LIST');
-        $priority = config('constants.PRIORITY_LIST');
-
-        if ($department_id) {
-            if ($user->scope == 2) {
-                $users = User::where('is_enable', 1)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            } else {
-                $users = User::where('is_enable', 1)->where('id', $user->id)->where('department_id', $department_id)->where('company_id', user_company_id())->get();
-            }
-            $departments = Department::where('is_enable', 1)->where('id', $department_id)->where('company_id', user_company_id())->get();
-        } else {
-            $users = User::where('is_enable', 1)->where('company_id', user_company_id())->get();
-            $departments = Department::where('is_enable', 1)->where('company_id', user_company_id())->get();
-        }
-
-        return response()->json([
-            'projects' => $projects,
-            'status' => $status,
-            'priority' => $priority,
-            'users' => $users,
-            'departments' => $departments
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'project_id'    => 'required|numeric',
             'priority'      => 'required|numeric',
             'status'        => 'required|numeric',
@@ -143,69 +122,75 @@ class TaskController extends Controller
             'title'         => 'required',
             'description'   => 'required',
         ]);
-
-        $task = new Task();
-
-        $task->company_id     = user_company_id();
-        $task->project_id     = $request->project_id;
-        $task->priority       = $request->priority;
-        $task->status         = $request->status;
-        $task->title          = $request->title;
-        $task->description    = $request->description;
-        $task->created_by     = Auth::id();
-        $task->start_date     = $request->start_date ?? NULL;
-        $task->end_date       = $request->end_date ?? NULL;
-        $task->department_id  = $request->department_id;
-
-        $task->save();
-
-        if ($request->assign_to) {
-            $users = $request->assign_to;
-            $task->users()->attach($users);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
         }
+        try {
+            $task = new Task();
 
-        if ($request->hasFile('attachment')) {
-            $file       = $request->file('attachment');
-            $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
-            $org_name   = $file->getClientOriginalName();
+            $task->company_id     = user_company_id();
+            $task->project_id     = $request->project_id;
+            $task->priority       = $request->priority;
+            $task->status         = $request->status;
+            $task->title          = $request->title;
+            $task->description    = $request->description;
+            $task->created_by     = Auth::id();
+            $task->start_date     = $request->start_date ?? NULL;
+            $task->end_date       = $request->end_date ?? NULL;
+            $task->department_id  = $request->department_id;
 
-            $request->file('attachment')->storeAs('public/tasks_file/', $file_name);
+            $task->save();
 
-            $file_data = new Attachment();
-            $file_data->task_id       = $task->id;
-            $file_data->file_name     = $org_name;
-            $file_data->path          = $file_name;
-            $file_data->created_by    = Auth::id();
+            if ($request->assign_to) {
+                $users = $request->assign_to;
+                $task->users()->attach($users);
+            }
 
-            $file_data->save();
+            if ($request->hasFile('attachment')) {
+                $file       = $request->file('attachment');
+                $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
+                $org_name   = $file->getClientOriginalName();
+
+                $request->file('attachment')->storeAs('public/tasks_file/', $file_name);
+
+                $file_data = new Attachment();
+                $file_data->task_id       = $task->id;
+                $file_data->file_name     = $org_name;
+                $file_data->path          = $file_name;
+                $file_data->created_by    = Auth::id();
+
+                $file_data->save();
+            }
+
+            if ($request->assign_to) {
+                $notification = new Notification();
+
+                $notification->task_id    = $task->id;
+                $notification->title      = 'New Task Assigned';
+                $notification->message    = 'A new task is assigned to you by ' . Auth::user()->name;
+                $notification->user_id    = $request->assign_to;
+                $notification->created_by = Auth::id();
+
+                $notification->save();
+
+                $msg_post = [
+                    'notification_message' => 'New task is assigned to you.',
+                    'url' => route('tasks.show', ['id' => base64_encode($notification->task_id)])
+                ];
+                $user_ids = [$notification->user_id];
+                $push_notification = new PushNotificationService();
+                $push_notification->send($msg_post, $user_ids);
+            }
+
+            return response()->json(['status' => 'success', 'message' => 'Task assigned successfully', 'task' => $task]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in assigning task', 'error' => $e->getMessage()], 500);
         }
-
-        if ($request->assign_to) {
-            $notification = new Notification();
-
-            $notification->task_id    = $task->id;
-            $notification->title      = 'New Task Assigned';
-            $notification->message    = 'A new task is assigned to you by ' . Auth::user()->name;
-            $notification->user_id    = $request->assign_to;
-            $notification->created_by = Auth::id();
-
-            $notification->save();
-
-            $msg_post = [
-                'notification_message' => 'New task is assigned to you.',
-                'url' => route('tasks.show', ['id' => base64_encode($notification->task_id)])
-            ];
-            $user_ids = [$notification->user_id];
-            $push_notification = new PushNotificationService();
-            $push_notification->send($msg_post, $user_ids);
-        }
-
-        return response()->json(['message' => 'Task assigned successfully', 'task' => $task]);
     }
 
     public function update(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'task_id'       => 'required|numeric',
             'project_id'    => 'required|numeric',
             'priority'      => 'required|numeric',
@@ -214,61 +199,68 @@ class TaskController extends Controller
             'title'         => 'required',
             'description'   => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
+        }
 
         $task = Task::find($request->task_id);
 
         if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
+            return response()->json(['status' => 'error','message' => 'Task not found'], 404);
         }
 
-        $task->project_id     = $request->project_id;
-        $task->priority       = $request->priority;
-        $task->status         = $request->status;
-        $task->title          = $request->title;
-        $task->description    = $request->description;
-        $task->updated_by     = Auth::id();
-        $task->start_date     = $request->start_date ?? NULL;
-        $task->end_date       = $request->end_date ?? NULL;
-        $task->department_id  = $request->department_id;
+        try {
+            $task->project_id     = $request->project_id;
+            $task->priority       = $request->priority;
+            $task->status         = $request->status;
+            $task->title          = $request->title;
+            $task->description    = $request->description;
+            $task->updated_by     = Auth::id();
+            $task->start_date     = $request->start_date ?? NULL;
+            $task->end_date       = $request->end_date ?? NULL;
+            $task->department_id  = $request->department_id;
+            $task->save();
+            if ($request->assign_to) {
+                $users = $request->assign_to;
+                $task->users()->sync($users);
+            }
+            if ($request->hasFile('attachment')) {
+                $file       = $request->file('attachment');
+                $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
+                $org_name   = $file->getClientOriginalName();
 
-        $task->save();
+                $request->file('attachment')->storeAs('public/tasks_file/', $file_name);
 
-        if ($request->assign_to) {
-            $users = $request->assign_to;
-            $task->users()->sync($users);
+                $file_data = new Attachment();
+                $file_data->task_id       = $task->id;
+                $file_data->file_name     = $org_name;
+                $file_data->path          = $file_name;
+                $file_data->created_by    = Auth::id();
+
+                $file_data->save();
+            }
+            return response()->json(['status' => 'success', 'message' => 'Task updated successfully', 'task' => $task]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in updating task', 'error' => $e->getMessage()], 500);
         }
-
-        if ($request->hasFile('attachment')) {
-            $file       = $request->file('attachment');
-            $file_name  = time() . '_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
-            $org_name   = $file->getClientOriginalName();
-
-            $request->file('attachment')->storeAs('public/tasks_file/', $file_name);
-
-            $file_data = new Attachment();
-            $file_data->task_id       = $task->id;
-            $file_data->file_name     = $org_name;
-            $file_data->path          = $file_name;
-            $file_data->created_by    = Auth::id();
-
-            $file_data->save();
-        }
-
-        return response()->json(['message' => 'Task updated successfully', 'task' => $task]);
     }
 
     public function destroy($id)
     {
-        $task_id = base64_decode($id);
-        $task = Task::find($task_id);
+        // $task_id = base64_decode($id);
+        try {
+            $task_id = $id;
+            $task = Task::find($task_id);
+            if (!$task) {
+                return response()->json(['status' => 'success','message' => 'Task not found'], 404);
+            }
 
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
+            $task->is_enable = 0;
+            $task->delete();
+
+            return response()->json(['status' => 'success', 'message' => 'Task deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in deleting tasks record', 'error' => $e->getMessage()], 500);
         }
-
-        $task->is_enable = 0;
-        $task->save();
-
-        return response()->json(['message' => 'Task deleted successfully']);
     }
 }

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Project;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -40,10 +42,12 @@ class ProjectController extends Controller
     }
     public function create(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(),[
             'name' => 'required',
         ]);
-
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()],400);
+        }
         $project = new Project();
         $project->name = $request->name;
         $project->description = $request->description ?? null;
@@ -56,7 +60,6 @@ class ProjectController extends Controller
         $project->created_by = auth('sanctum')->user()->id;
         try {
             $project->save();
-
             return response()->json(['status' => 'success','message' => 'Project created successfully', 'project' => $project]);
         } catch (\Exception $e) {
         return response()->json(['status' => 'error', 'message' => 'Error in creating project record', 'error' => $e->getMessage()], 500);
@@ -73,7 +76,7 @@ class ProjectController extends Controller
         $project = Project::find($id);
 
         if (!$project) {
-            return response()->json(['message' => 'Project not found'], 404);
+            return response()->json(['status' => 'empty','message' => 'Project not found'], 404);
         }
 
         $project->name = $request->name;
@@ -86,17 +89,21 @@ class ProjectController extends Controller
         $project->updated_by = Auth::id();
 
        try {
-        $project->save();
-        return response()->json(['message' => 'Project updated successfully', 'project' => $project]);
-       } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'message' => 'Error in updating project record', 'error' => $e->getMessage()], 500);
-       }
+            $project->save();
+            return response()->json(['status' => 'success','message' => 'Project updated successfully', 'project' => $project]);
+            } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in updating project record', 'error' => $e->getMessage()], 500);
+        }
     }
 
-    public function destroy($id)
+    public function destroy($id) :JsonResponse
     {  
+     
         try {
-            $project = Project::findOrFail($id);
+            $project = Project::find($id);
+            if (!$project) {
+                return response()->json(['status' => 'empty','message' => 'Project not found'], 404);
+            }
             $project->delete(); // Soft delete
             return response()->json(['status' => 'success','message' => 'Project deleted successfully']);
          }catch (\Exception $e) {
@@ -106,24 +113,26 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        // $project_id = base64_decode($id);
-        $project_id = $id;
-        $project = Project::with('comments.user', 'attachments')->find($project_id);
-
-        if (!$project) {
-            return response()->json(['message' => 'Project not found'], 404);
+         try {
+            $project_id = $id;
+            $project = Project::with('comments.user', 'attachments')->find($project_id);
+    
+            if (!$project) {
+                return response()->json(['status' => 'empty','message' => 'Project not found'], 404);
+            }
+    
+            $ref_url = explode('*', $project->ref_url);
+            return response()->json([
+                 'status' => 'success',
+                 'message' => 'Project detail Retrieved',
+                 'data' => [
+                    'project' => $project,
+                    'ref_url' => $ref_url,
+                 ]
+            ]);
+         } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error in retrieving projects record', 'error' => $e->getMessage()], 500);
         }
-
-        $ref_url = explode('*', $project->ref_url);
-
-        return response()->json([
-             'status' => 'success',
-             'message' => 'Project detail Retrieved',
-             'data' => [
-                'project' => $project,
-                'ref_url' => $ref_url,
-             ]
-        ]);
     }
 
     public function soft_delete_functions($id)

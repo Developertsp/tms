@@ -11,15 +11,15 @@ use App\Models\User;
 
 class JdTaskController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
 
-        $this->middleware('permission:view-jd-tasks|create-jd-tasks|update-jd-tasks|delete-jd-tasks', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-jd-tasks', ['only' => ['store']]);
-        $this->middleware('permission:update-jd-tasks', ['only' => ['update']]);
-        $this->middleware('permission:delete-jd-tasks', ['only' => ['destroy']]);
-    }
+    //     $this->middleware('permission:view-jd-tasks|create-jd-tasks|update-jd-tasks|delete-jd-tasks', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-jd-tasks', ['only' => ['store']]);
+    //     $this->middleware('permission:update-jd-tasks', ['only' => ['update']]);
+    //     $this->middleware('permission:delete-jd-tasks', ['only' => ['destroy']]);
+    // }
 
     public function index()
     {

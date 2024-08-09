@@ -59,7 +59,7 @@ class DepartmentController extends Controller
         $department->description = $request->description;
         $department->members = $request->members;
         $department->email = $request->email ?? null;
-        $department->company_id = user_company_id() ?? 2;
+        $department->company_id = user_company_id();
         $department->created_by = auth('sanctum')->user()->id;
 
         try {
@@ -85,15 +85,19 @@ class DepartmentController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'message' => $validator->errors()]);
         }
-        $department = Department::findOrFail($id);
-        $department->name = $request->name;
-        $department->description = $request->description;
-        $department->members = $request->members;
-        $department->email = $request->email ?? null;
-        $department->company_id = user_company_id() ?? 2;
-        $department->updated_by = auth('sanctum')->user()->id;
-
-          try {
+        $department = Department::find($id);
+        if(!$department)
+        {
+            return response()->json(['status' => 'empty','message' => 'Department not found'], 404);
+        }
+        
+        try {
+            $department->name = $request->name;
+            $department->description = $request->description;
+            $department->members = $request->members;
+            $department->email = $request->email ?? null;
+            $department->company_id = user_company_id();
+            $department->updated_by = auth('sanctum')->user()->id;
             $department->save();
 
             return response()->json([
@@ -109,7 +113,11 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
       try {
-        $department = Department::findOrFail($id);
+        $department = Department::find($id);
+        if(!$department)
+        {
+            return response()->json(['status' => 'empty','message' => 'Department not found'], 404);
+        }
         $department->delete();
 
         return response()->json([

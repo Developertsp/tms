@@ -30,7 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Project Routes
     Route::get('projects', [ProjectController::class, 'index'])->name('projects.list');
     Route::post('projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    Route::post('projects/update/{id}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::put('projects/update/{id}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('projects/destroy/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     Route::get('projects/show/{id}', [ProjectController::class, 'show'])->name('projects.show');
     Route::post('projects/comments/store', [ProjectCommentController::class, 'store'])->name('projects.comments.store');
@@ -39,25 +39,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Company Routes
     Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
     Route::post('companies/create', [CompanyController::class, 'create'])->name('companies.create');
-    Route::post('companies/update/{id}', [CompanyController::class, 'update'])->name('companies.update');
+    Route::put('companies/update/{id}', [CompanyController::class, 'update'])->name('companies.update');
     Route::delete('companies/destroy/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 
     // Department Routes
     Route::get('departments', [DepartmentController::class, 'index'])->name('departments.list');
     Route::post('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
-    Route::post('departments/update/{id}', [DepartmentController::class, 'update'])->name('departments.update');
+    Route::put('departments/update/{id}', [DepartmentController::class, 'update'])->name('departments.update');
     Route::delete('departments/destroy/{id}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
 
      // Task Routes
     Route::get('tasks', [TaskController::class, 'index'])->name('tasks.list');
-    Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create');
-    Route::post('tasks/store', [TaskController::class, 'store'])->name('tasks.store');
+    Route::post('tasks/create', [TaskController::class, 'create'])->name('tasks.create');
     Route::get('tasks/show/{id}', [TaskController::class, 'show'])->name('tasks.show');
-    Route::post('tasks/update', [TaskController::class, 'update'])->name('tasks.update');
+    Route::put('tasks/update', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::get('tasks/report', [TaskController::class, 'report'])->name('tasks.report');
     Route::post('tasks/export', [TaskController::class, 'export'])->name('tasks.export');
     Route::post('tasks/update_deadline', [TaskController::class, 'update_task_deadline'])->name('tasks.update.deadline');
-    Route::delete('tasks/destroy/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 });
 
 
