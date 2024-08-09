@@ -115,9 +115,9 @@ class TaskController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'project_id'    => 'required|numeric',
-            'priority'      => 'required|numeric',
-            'status'        => 'required|numeric',
+            'project_id'    => 'required|string',
+            'priority'      => 'required|string',
+            'status'        => 'required|string',
             'attachment'   => 'max:2048',
             'title'         => 'required',
             'description'   => 'required',
@@ -127,7 +127,6 @@ class TaskController extends Controller
         }
         try {
             $task = new Task();
-
             $task->company_id     = user_company_id();
             $task->project_id     = $request->project_id;
             $task->priority       = $request->priority;
@@ -191,10 +190,10 @@ class TaskController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'task_id'       => 'required|numeric',
-            'project_id'    => 'required|numeric',
-            'priority'      => 'required|numeric',
-            'status'        => 'required|numeric',
+            'task_id'       => 'required|string',
+            'project_id'    => 'required|string',
+            'priority'      => 'required|string',
+            'status'        => 'required',
             'attachment'    => 'max:2048',
             'title'         => 'required',
             'description'   => 'required',
@@ -252,7 +251,7 @@ class TaskController extends Controller
             $task_id = $id;
             $task = Task::find($task_id);
             if (!$task) {
-                return response()->json(['status' => 'success','message' => 'Task not found'], 404);
+                return response()->json(['status' => 'empty','message' => 'Task not found'], 404);
             }
 
             $task->is_enable = 0;

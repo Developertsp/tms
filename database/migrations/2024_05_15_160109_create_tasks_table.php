@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('project_id')->nullable();
             $table->integer('department_id')->nullable();
             $table->tinyInteger('priority');
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status');
             $table->tinyInteger('is_enable')->default(1);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
